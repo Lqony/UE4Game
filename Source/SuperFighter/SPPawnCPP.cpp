@@ -92,6 +92,7 @@ ASPPawnCPP::ASPPawnCPP()
 	States.UP_DASH = false;
 	States.DOWN_DASH = false;
 	States.SPOT_DODGE = false;
+	States.AFFECTED_BY_GRAVITY = true;
 
 	KeyStates.LEFT_KEY = false;
 	KeyStates.RIGHT_KEY = false;
@@ -1342,7 +1343,8 @@ void ASPPawnCPP::Friction(float DeltaTime)
 
 void ASPPawnCPP::Gravity(float DeltaTime)
 {
-	if (Forces.Y > Attributes.MaxGravity && !GroundUnderFeet() && !States.DASH && !States.JUMP && !States.JUMP_LEFT_WALL && !States.JUMP_RIGHT_WALL) {
+	if (States.AFFECTED_BY_GRAVITY && Forces.Y > Attributes.MaxGravity && !GroundUnderFeet() && !States.DASH && !States.JUMP 
+		&& !States.JUMP_LEFT_WALL && !States.JUMP_RIGHT_WALL) {
 		if ((States.LIGHT_ATTACK || States.STRONG_ATTACK) && Forces.Y < 0.0f)
 			Forces.Y -= ValuePerSecond(Attributes.Gravity, DeltaTime) / 10.0f;
 		else
@@ -1443,12 +1445,6 @@ void ASPPawnCPP::ClearStatesWhileHit()
 			States.LIGHT_ATTACK = false;
 			WorkData.LightAttackTimer = false;
 		}
-	
-		if (!States.CAN_MOVE)States.CAN_MOVE = true;
-		if (!States.CAN_JUMP)States.CAN_JUMP = true;
-		if (!States.CAN_LIGHT_ATTACK)States.CAN_LIGHT_ATTACK = true;
-		if (!States.CAN_STRONG_ATTACK)States.CAN_STRONG_ATTACK = true;
-		if (!States.CAN_DEFENCE)States.CAN_DEFENCE = true;
 }
 
 void ASPPawnCPP::UpdateTimers(float DeltaTime)
@@ -1494,13 +1490,6 @@ void ASPPawnCPP::SetUpDefence()
 			WorkData.JumpTimer = false;
 		}
 
-		if (States.CAN_MOVE) States.CAN_MOVE = false;
-		if (States.CAN_JUMP) States.CAN_JUMP = false;
-		if (States.CAN_LIGHT_ATTACK) States.CAN_LIGHT_ATTACK = false;
-		if (States.CAN_STRONG_ATTACK) States.CAN_STRONG_ATTACK = false;
-		if (States.CAN_DEFENCE) States.CAN_DEFENCE = false;
-		if (States.CAN_DASH) States.CAN_DASH = false;
-
 		ActionDefence.ExecuteIfBound();
 }
 
@@ -1508,13 +1497,6 @@ void ASPPawnCPP::ClearDefence()
 {
 	
 		if (States.DEFENCE) States.DEFENCE = false;
-
-		if (!States.CAN_MOVE)			States.CAN_MOVE = true;
-		if (!States.CAN_JUMP)			States.CAN_JUMP = true;
-		if (!States.CAN_LIGHT_ATTACK)	States.CAN_LIGHT_ATTACK = true;
-		if (!States.CAN_STRONG_ATTACK)	States.CAN_STRONG_ATTACK = true;
-		if (!States.CAN_DEFENCE)		States.CAN_DEFENCE = true;
-		if (!States.CAN_DASH)			States.CAN_DASH = true;
 }
 
 void ASPPawnCPP::UseDefence()
@@ -1565,15 +1547,7 @@ void ASPPawnCPP::SetUpDash()
 		if (States.JUMP_RIGHT_WALL) {
 			States.JUMP_RIGHT_WALL = false;
 			WorkData.JumpTimer = false;
-		}
-
-		if (States.CAN_MOVE)				States.CAN_MOVE = false;
-		if (States.CAN_JUMP)				States.CAN_JUMP = false;
-		if (States.CAN_LIGHT_ATTACK)		States.CAN_LIGHT_ATTACK = false;
-		if (States.CAN_STRONG_ATTACK)		States.CAN_STRONG_ATTACK = false;
-		if (States.CAN_DEFENCE)				States.CAN_DEFENCE = false;
-		if (States.CAN_DASH)				States.CAN_DASH = false;
-	
+		}	
 		
 		if (States.SPOT_DODGE) {
 			WorkData.DashTimer = true;
@@ -1609,12 +1583,6 @@ void ASPPawnCPP::StopDash()
 {
 	
 		if (States.DASH) States.DASH = false;
-
-		if (!States.CAN_MOVE)				States.CAN_MOVE = true;
-		if (!States.CAN_JUMP)				States.CAN_JUMP = true;
-		if (!States.CAN_LIGHT_ATTACK)		States.CAN_LIGHT_ATTACK = true;
-		if (!States.CAN_STRONG_ATTACK)		States.CAN_STRONG_ATTACK = true;
-		if (!States.CAN_DEFENCE)			States.CAN_DEFENCE = true;
 
 		if (States.CAN_DASH) States.CAN_DASH = false;
 		
@@ -1661,13 +1629,6 @@ void ASPPawnCPP::StartLightAttack(float time)
 			WorkData.JumpTimer = false;
 		}
 
-		if (States.CAN_MOVE)			States.CAN_MOVE = false;
-		if (States.CAN_JUMP)			States.CAN_JUMP = false;
-		if (States.CAN_DEFENCE)			States.CAN_DEFENCE = false;
-		if (States.CAN_DASH)			States.CAN_DASH = false;
-		if (States.CAN_STRONG_ATTACK)	States.CAN_STRONG_ATTACK = false;
-		if (States.CAN_LIGHT_ATTACK)	States.CAN_LIGHT_ATTACK = false;
-
 		WorkData.LightAttackTimer = false;
 		
 		if (!HasAuthority()) {
@@ -1690,14 +1651,7 @@ void ASPPawnCPP::StartLightAttack(float time)
 void ASPPawnCPP::EndLightAttack()
 {
 		if (States.LIGHT_ATTACK) States.LIGHT_ATTACK = false;
-		/*
-		if (!States.CAN_MOVE)			States.CAN_MOVE = true;
-		if (!States.CAN_JUMP)			States.CAN_JUMP = true;
-		if (!States.CAN_DEFENCE)		States.CAN_DEFENCE = true;
-		if (!States.CAN_DASH)			States.CAN_DASH = true;
-		if (!States.CAN_STRONG_ATTACK)	States.CAN_STRONG_ATTACK = true;
-		if (!States.CAN_LIGHT_ATTACK)	States.CAN_LIGHT_ATTACK = true;*/
-		
+	
 		WorkData.LightAttackTimer = false;
 }
 
@@ -1724,14 +1678,6 @@ void ASPPawnCPP::SetUpStrongAttack()
 			WorkData.LightAttackTimer = false;
 		}
 		
-
-		if(States.CAN_MOVE) States.CAN_MOVE = false;
-		if(States.CAN_JUMP) States.CAN_JUMP = false;
-		if(States.CAN_LIGHT_ATTACK) States.CAN_LIGHT_ATTACK = false;
-		if(States.CAN_STRONG_ATTACK) States.CAN_STRONG_ATTACK = false;
-		if(States.CAN_DEFENCE) States.CAN_DEFENCE = false;
-		if(States.CAN_DASH) States.CAN_DASH  = false;
-		
 		WorkData.StrongAttackMeter = 0;
 		WorkData.StrongAttackTimer = true;
 		WorkData.StrongAttackTimerDelta = 0.0f;
@@ -1741,13 +1687,6 @@ void ASPPawnCPP::ClearStrongAttack()
 {
 	
 		if (States.STRONG_ATTACK) States.STRONG_ATTACK = false;
-
-		if (!States.CAN_MOVE)			States.CAN_MOVE = true;
-		if (!States.CAN_JUMP)			States.CAN_JUMP = true;
-		if (!States.CAN_LIGHT_ATTACK)	States.CAN_LIGHT_ATTACK = true;
-		if (!States.CAN_STRONG_ATTACK)	States.CAN_STRONG_ATTACK = true;
-		if (!States.CAN_DEFENCE)		States.CAN_DEFENCE = true;
-		if (!States.CAN_DASH)			States.CAN_DASH = true;
 
 		WorkData.StrongAttackTimer = false;
 
@@ -2379,12 +2318,6 @@ void ASPPawnCPP::LooseStock_Implementation()
 	States.JUMP_RIGHT_WALL = false;
 	States.ON_GROUND = false;
 	States.BUSY = false;
-	States.CAN_MOVE = true;
-	States.CAN_JUMP = true;
-	States.CAN_LIGHT_ATTACK = true;
-	States.CAN_STRONG_ATTACK = true;
-	States.CAN_DEFENCE = true;
-	States.CAN_DASH = true;
 	States.DEFENCE = false;
 	States.STRONG_ATTACK = false;
 	States.LIGHT_ATTACK = false;
@@ -2393,6 +2326,7 @@ void ASPPawnCPP::LooseStock_Implementation()
 	States.UP_DASH = false;
 	States.DOWN_DASH = false;
 	States.SPOT_DODGE = false;
+	States.AFFECTED_BY_GRAVITY = true;
 
 	KeyStates.LEFT_KEY = false;
 	KeyStates.RIGHT_KEY = false;

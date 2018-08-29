@@ -227,6 +227,9 @@ struct FSPPawnStates {
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 		bool SPOT_DODGE = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
+		bool AFFECTED_BY_GRAVITY = false;
 };
 
 USTRUCT(BlueprintType)
@@ -808,7 +811,10 @@ public:
 		//For Client we mainly use ClientStates because we Call events based on comparing States to Client states
 		//Then in those Evenets we want to check most current states for server those are States
 		//And for client those are ClientStates and after we call the events we finaly do states=clientstates
-		FSPPawnStates CurrentStates() { return States; };
+	FSPPawnStates CurrentStates() { return States; };
+
+	void ChangeGravityAffection(bool new_grav) { if (States.AFFECTED_BY_GRAVITY != new_grav) States.AFFECTED_BY_GRAVITY = new_grav; }
+	bool AffectedByGravity() { return States.AFFECTED_BY_GRAVITY;  }
 
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
 	bool IsStun();
