@@ -64,6 +64,7 @@ ASPPawnCPP::ASPPawnCPP()
 
 	WorkData.JumpStart = false;
 	WorkData.YUp = true;
+	WorkData.UpB = true;
 
 	ClientCurrentDefence = 0.0f;
 	ClientInjuries = 0.0f;
@@ -874,7 +875,7 @@ void ASPPawnCPP::LightAttack(int index)
 void ASPPawnCPP::StrongAttack(int index)
 {
 	if (HasAuthority()) {
-		if (CanStrongAttack()) {
+		if (CanStrongAttack() && ((index != 3) || (States.ON_GROUND) || (WorkData.UpB) ) ){
 
 			SetUpStrongAttack();
 
@@ -900,8 +901,11 @@ void ASPPawnCPP::StrongAttack(int index)
 					if (CurrentAxis.Y > 0.0f) {
 						if (States.ON_GROUND)
 							ActionUpperStrongAttack.ExecuteIfBound();
-						else
+						else {
 							ActionAirUpperStrongAttack.ExecuteIfBound();
+							WorkData.UpB = false;
+						}
+							
 					}
 					else {
 						if (States.ON_GROUND)
@@ -938,6 +942,7 @@ void ASPPawnCPP::StrongAttack(int index)
 				}
 				else {
 					ActionAirUpperStrongAttack.ExecuteIfBound();
+					WorkData.UpB = false;
 					Client_StrongAttack(GetSendPosition(), 6);
 				}
 			}
@@ -1410,9 +1415,6 @@ void ASPPawnCPP::UpgradeStrongAttackMeter()
 
 void ASPPawnCPP::ClearStatesWhileHit()
 {
-		if(HasAuthority()) {
-			WorkData.DelayTimer = false;
-		} 
 		if(!HasAuthority()){
 			WorkData.ClientTimer = false;
 		}
@@ -1421,30 +1423,27 @@ void ASPPawnCPP::ClearStatesWhileHit()
 		if (States.MOVE_LEFT)States.MOVE_LEFT = false;
 		if (States.JUMP) {
 			States.JUMP = false;
-			WorkData.JumpTimer = false;
 		}
 		if (States.JUMP_LEFT_WALL) {
 			States.JUMP_LEFT_WALL = false;
-			WorkData.JumpTimer = false;
 		}
 		if (States.JUMP_RIGHT_WALL) {
 			States.JUMP_RIGHT_WALL = false;
-			WorkData.JumpTimer = false;
 		}
 		if (States.DEFENCE) {
 			States.DEFENCE = false;
-			//Replaced By Manage Defence
-			//GetWorldTimerManager().ClearTimer(WorkData.DefenceTimer);
-			//GetWorldTimerManager().SetTimer(WorkData.DefenceTimer, this, &ASPPawnCPP::ReplenishDefence, 1.0f, true);
 		}
 		if (States.STRONG_ATTACK) {
 			States.STRONG_ATTACK = false;
-			WorkData.StrongAttackTimer = false;
 		}
 		if (States.LIGHT_ATTACK) {
 			States.LIGHT_ATTACK = false;
-			WorkData.LightAttackTimer = false;
 		}
+
+		WorkData.DelayTimer = false;
+		WorkData.LightAttackTimer = false;
+		WorkData.StrongAttackTimer = false;
+		WorkData.JumpTimer = false;
 }
 
 void ASPPawnCPP::UpdateTimers(float DeltaTime)
@@ -1717,6 +1716,7 @@ void ASPPawnCPP::ApplyForces(float DeltaTime)
 			if (!SetActorLocation(current_location, true, nullptr)) {
 				if (Forces.Y < 0) { 
 					WorkData.AirJumped = 0;
+					WorkData.UpB = true;
 				}
 				if (IsStun() && (Forces.Y > 200.0f || Forces.Y < -200.0f)) {
 					Forces.Y = -Forces.Y;

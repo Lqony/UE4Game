@@ -97,7 +97,7 @@ void ASPHitBoxCPP::UpdateMissile(float DeltaTime)
 		if (MissileDetails.Launched) {
 			FVector CurrentPosition = GetActorLocation();
 			CurrentPosition.X += MissileDetails.Trajectory.X * (MissileDetails.Trajectory.Z * (DeltaTime / 1.0f));
-			CurrentPosition.Y += MissileDetails.Trajectory.Y * (MissileDetails.Trajectory.Z * (DeltaTime / 1.0f));
+			CurrentPosition.Z += MissileDetails.Trajectory.Y * (MissileDetails.Trajectory.Z * (DeltaTime / 1.0f));
 			SetActorLocation(CurrentPosition, true);
 		}
 	}

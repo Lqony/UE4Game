@@ -315,8 +315,10 @@ struct FSPWorkData {
 
 		//So we can run pre-jump animation
 		bool JumpStart;
-
+		//So we can check if Y direction was changed
 		bool YUp;
+		//Aerial recovery
+		bool UpB;
 };
 
 USTRUCT(BlueprintType)
@@ -449,6 +451,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
 		void ResetRestrictions();
+
+	UFUNCTION(BlueprintCallable, Category = SuperFighter)
+		void ResetForces(bool n_X, bool n_Y) { if (n_X) Forces.X = 0.0f; if (n_Y) Forces.Y = 0.0f;};
 
 	//ACTIONS---------------------------------------------------------
 	float DelayActionTime;
