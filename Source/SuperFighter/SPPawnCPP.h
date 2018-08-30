@@ -1051,7 +1051,6 @@ public:
 					PingDelta /= 1000.0f;
 				}
 			}
-			GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, FString::SanitizeFloat(PingDelta));
 			if (state) {
 				GetWorldTimerManager().SetTimer(KeyTimers.DefenceKeyDown, this, &ASPPawnCPP::DefenceKeyDown, PingDelta, false);
 			}
