@@ -2234,13 +2234,16 @@ void ASPPawnCPP::GetHit_Implementation(float hitstun, float damage, FVector knoc
 			}
 		}
 
+		WorkData.Injuries += damage - (damage / (100.0f / ((float)Attributes.Tenacity * 0.5f)));
+		ClientInjuries = WorkData.Injuries;
+
 		if (!States.DEFENCE || WorkData.CurrentDefence == 0.0f) {
 			WorkData.WasHit = true;
 			ClearStatesWhileHit();
 
 			if (WorkData.HitStun < 0.06f) {
 				WorkData.HitStun = hitstun
-					+ ((hitstun * (float)WorkData.Injuries) / 100.0f); //Injuries adds to hitstun;
+					+ ((hitstun * (float)WorkData.Injuries) / 200.0f); //Injuries adds to hitstun;
 				WorkData.HitStun -= (WorkData.HitStun *(float)Attributes.Tenacity) / 100.0f; //Tenacity lowers hitstun
 
 			}
@@ -2249,9 +2252,6 @@ void ASPPawnCPP::GetHit_Implementation(float hitstun, float damage, FVector knoc
 			WorkData.HitForce = knockback;
 			Client_GetHit(GetSendPosition(), knockback, WorkData.HitStun);
 		}
-	
-		WorkData.Injuries += damage - (damage / (100.0f / ((float)Attributes.Tenacity * 0.5f)));
-		ClientInjuries = WorkData.Injuries;
 	}
 }
 
