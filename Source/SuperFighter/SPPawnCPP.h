@@ -1133,4 +1133,6 @@ public:
 			void SetCurrentPlayRate(float rate);
 
 		void ManageTimeChange(float DeltaTime);
+		UFUNCTION(BlueprintCallable, Category = SuperFighter)
+		void SlowTimeByForce(float force);
 };

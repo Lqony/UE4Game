@@ -1380,46 +1380,46 @@
 "../../../Engine/Content/BasicShapes/Cone.uasset" 1380
 "E:/Unreal Engine Projects/SuperFighter/Intermediate/CachedAssetRegistry.bin" 1381
 "E:/Unreal Engine Projects/SuperFighter/Content/Arena1_BuiltData.uasset" 1382
-"E:/Unreal Engine Projects/SuperFighter/Saved/Autosaves/Game/UEDPCArena1.umap" 1383
-"E:/Unreal Engine Projects/SuperFighter/Saved/Autosaves/Game/BLUEPRINTS/Physics/SPHitBoxBP_Auto1.uasset" 1384
-"E:/Unreal Engine Projects/SuperFighter/Saved/Autosaves/Game/BLUEPRINTS/WORLDSETTINGS/NinjaPawn_Auto1.uasset" 1385
-"E:/Unreal Engine Projects/SuperFighter/Saved/Cooked/WindowsNoEditor/SuperFighter/CookedIniVersion.txt" 1386
-"../../../Engine/Config/HTML5/HTML5Engine.ini" 1387
-"../../../Engine/Content/MobileResources/HUD/VirtualJoystick_Thumb.uasset" 1388
-"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/3/7/9/TEXTURE_814DCC3DC72143F49509781513CB9855_BGRA8_2303080240B4FBC995EC43ABAA9A8C6__FF67176A68B6CAB831A7F4C31766F94B348FF9C3.udd" 1389
-"E:/Unreal Engine Projects/SuperFighter/Content/Arena1.umap" 1390
-"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/Background/DarkMountainBG/Sprites/RiverTile.uasset" 1391
-"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/Background/DarkMountainBG/Sprites/River.uasset" 1392
-"../../../Engine/Plugins/2D/Paper2D/Content/TranslucentUnlitSpriteMaterial.uasset" 1393
-"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/Background/DarkMountainBG/rocks.uasset" 1394
-"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/Objects/Ground.uasset" 1395
-"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/Physics/BoundaryHitBox.uasset" 1396
-"../../../Engine/Content/EditorBlueprintResources/ActorMacros.uasset" 1397
-"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/WORLDSETTINGS/SPPlayerStateBP.uasset" 1398
-"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/WORLDSETTINGS/SPHUDBP.uasset" 1399
-"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/HUD/SPMainHUD.uasset" 1400
-"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/HUD/InGameMenu/InGameMenu.uasset" 1401
-"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/HUD/InGameMenu/Exit.uasset" 1402
-"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/GUI/Button_Sprite_12.uasset" 1403
-"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/GUI/Button.uasset" 1404
-"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/GUI/Button_Sprite_19.uasset" 1405
-"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/HUD/InGameMenu/EndScreen.uasset" 1406
-"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/Custom/YOu_lose.uasset" 1407
-"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/Custom/YOu_lose_Sprite.uasset" 1408
-"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/Custom/You_win_Sprite.uasset" 1409
-"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/Custom/You_win.uasset" 1410
-"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/HUD/InGameMenu/HUD/EnemyHUD2.uasset" 1411
-"../../../Engine/Content/EditorBlueprintResources/StandardMacros.uasset" 1412
-"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/HUD/InGameMenu/HUD/PlayerHUD.uasset" 1413
-"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/HUD/PlayerControll/PlayerButtons.uasset" 1414
-"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/GUI/Button_Sprite_10.uasset" 1415
-"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/GUI/Button_Sprite_11.uasset" 1416
-"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/GUI/Button_Sprite_8.uasset" 1417
-"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/GUI/Button_Sprite_9.uasset" 1418
-"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/WORLDSETTINGS/SuperFighterGameModeBaseBP.uasset" 1419
-"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/WORLDSETTINGS/SPPlayerControllerBP.uasset" 1420
-"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/WORLDSETTINGS/NinjaPawn.uasset" 1421
-"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/Physics/SPHitBoxBP.uasset" 1422
+"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/Physics/SPHitBoxBP.uasset" 1383
+"E:/Unreal Engine Projects/SuperFighter/Saved/Autosaves/Game/UEDPCArena1.umap" 1384
+"E:/Unreal Engine Projects/SuperFighter/Saved/Autosaves/Game/BLUEPRINTS/Physics/SPHitBoxBP_Auto1.uasset" 1385
+"E:/Unreal Engine Projects/SuperFighter/Saved/Autosaves/Game/BLUEPRINTS/WORLDSETTINGS/NinjaPawn_Auto1.uasset" 1386
+"E:/Unreal Engine Projects/SuperFighter/Saved/Cooked/WindowsNoEditor/SuperFighter/CookedIniVersion.txt" 1387
+"../../../Engine/Config/HTML5/HTML5Engine.ini" 1388
+"../../../Engine/Content/MobileResources/HUD/VirtualJoystick_Thumb.uasset" 1389
+"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/3/7/9/TEXTURE_814DCC3DC72143F49509781513CB9855_BGRA8_2303080240B4FBC995EC43ABAA9A8C6__FF67176A68B6CAB831A7F4C31766F94B348FF9C3.udd" 1390
+"E:/Unreal Engine Projects/SuperFighter/Content/Arena1.umap" 1391
+"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/Background/DarkMountainBG/Sprites/RiverTile.uasset" 1392
+"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/Background/DarkMountainBG/Sprites/River.uasset" 1393
+"../../../Engine/Plugins/2D/Paper2D/Content/TranslucentUnlitSpriteMaterial.uasset" 1394
+"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/Background/DarkMountainBG/rocks.uasset" 1395
+"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/Objects/Ground.uasset" 1396
+"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/Physics/BoundaryHitBox.uasset" 1397
+"../../../Engine/Content/EditorBlueprintResources/ActorMacros.uasset" 1398
+"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/WORLDSETTINGS/SPPlayerStateBP.uasset" 1399
+"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/WORLDSETTINGS/SPHUDBP.uasset" 1400
+"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/HUD/SPMainHUD.uasset" 1401
+"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/HUD/InGameMenu/InGameMenu.uasset" 1402
+"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/HUD/InGameMenu/Exit.uasset" 1403
+"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/GUI/Button_Sprite_12.uasset" 1404
+"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/GUI/Button.uasset" 1405
+"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/GUI/Button_Sprite_19.uasset" 1406
+"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/HUD/InGameMenu/EndScreen.uasset" 1407
+"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/Custom/YOu_lose.uasset" 1408
+"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/Custom/YOu_lose_Sprite.uasset" 1409
+"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/Custom/You_win_Sprite.uasset" 1410
+"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/Custom/You_win.uasset" 1411
+"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/HUD/InGameMenu/HUD/EnemyHUD2.uasset" 1412
+"../../../Engine/Content/EditorBlueprintResources/StandardMacros.uasset" 1413
+"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/HUD/InGameMenu/HUD/PlayerHUD.uasset" 1414
+"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/HUD/PlayerControll/PlayerButtons.uasset" 1415
+"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/GUI/Button_Sprite_10.uasset" 1416
+"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/GUI/Button_Sprite_11.uasset" 1417
+"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/GUI/Button_Sprite_8.uasset" 1418
+"E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/GUI/Button_Sprite_9.uasset" 1419
+"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/WORLDSETTINGS/SuperFighterGameModeBaseBP.uasset" 1420
+"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/WORLDSETTINGS/SPPlayerControllerBP.uasset" 1421
+"E:/Unreal Engine Projects/SuperFighter/Content/BLUEPRINTS/WORLDSETTINGS/NinjaPawn.uasset" 1422
 "E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/Character/Ninja/AIrStrongAttack3/NinjaAirStrongAttack3.uasset" 1423
 "E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/Character/Ninja/AIrStrongAttack3/AirStrongAttack3_Sprite_0.uasset" 1424
 "E:/Unreal Engine Projects/SuperFighter/Content/ASSETS/Character/Ninja/AIrStrongAttack3/AirStrongAttack3.uasset" 1425
@@ -3442,11 +3442,11 @@
 "C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/3/8/9/TEXTURE_814DCC3DC72143F49509781513CB9855_BGRA8_EFCCE016429008D9D6575CB3A2DF598__16171D0A279E1163332B683EBEBC3BC1F3E98016.udd" 3442
 "C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/9/7/6/TEXTURE_814DCC3DC72143F49509781513CB9855_BGRA8_EFCCE016429008D9D6575CB3A2DF598__C4821DF4BD82BD0E3E860F170714F74BB99AF852.udd" 3443
 "C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/5/9/6/TEXTURE_814DCC3DC72143F49509781513CB9855_BGRA8_EFCCE016429008D9D6575CB3A2DF598__77E8DEFEC5BF83A9B1B48AF3C7ACE93859F616D2.udd" 3444
-"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/0/3/8/TEXTURE_814DCC3DC72143F49509781513CB9855_BGRA8_72107D3F4110EAEF3BE5D5841EFE141__EBFABFC50FA425319A0ADC765708F5FF2CC0430C.udd" 3445
-"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/5/8/4/TEXTURE_814DCC3DC72143F49509781513CB9855_BGRA8_4963A1D64E358284C2A151B90C2ACE2__0877A119ECF8D290E51A42A8C457FAB4635C4CE5.udd" 3446
-"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/7/4/9/TEXTURE_814DCC3DC72143F49509781513CB9855_BGRA8_8F68DA7846EE5B1FF2DDDC9433F817A__9FDFF1F38E2A447698C25ADA8828C9B7E78C264B.udd" 3447
-"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/7/6/3/TEXTURE_814DCC3DC72143F49509781513CB9855_BGRA8_D07216FC40952418CFE0E28778D79B2__89B7DC46CA82953BBE8057421208BB96E5C619A9.udd" 3448
-"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/0/1/7/TEXTURE_814DCC3DC72143F49509781513CB9855_BGRA8_70FBE2144E9E03B3586828844F8F9E3__AAD3CE188F72F692D5AA9967E2CA3DEDA43A777F.udd" 3449
+"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/5/8/4/TEXTURE_814DCC3DC72143F49509781513CB9855_BGRA8_4963A1D64E358284C2A151B90C2ACE2__0877A119ECF8D290E51A42A8C457FAB4635C4CE5.udd" 3445
+"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/0/3/8/TEXTURE_814DCC3DC72143F49509781513CB9855_BGRA8_72107D3F4110EAEF3BE5D5841EFE141__EBFABFC50FA425319A0ADC765708F5FF2CC0430C.udd" 3446
+"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/0/1/7/TEXTURE_814DCC3DC72143F49509781513CB9855_BGRA8_70FBE2144E9E03B3586828844F8F9E3__AAD3CE188F72F692D5AA9967E2CA3DEDA43A777F.udd" 3447
+"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/7/4/9/TEXTURE_814DCC3DC72143F49509781513CB9855_BGRA8_8F68DA7846EE5B1FF2DDDC9433F817A__9FDFF1F38E2A447698C25ADA8828C9B7E78C264B.udd" 3448
+"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/7/6/3/TEXTURE_814DCC3DC72143F49509781513CB9855_BGRA8_D07216FC40952418CFE0E28778D79B2__89B7DC46CA82953BBE8057421208BB96E5C619A9.udd" 3449
 "C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/0/5/7/TEXTURE_814DCC3DC72143F49509781513CB9855_BGRA8_0334AFB24D2E5AA9081F9BAFF9F95EE__ED95787AC12E31E95E769FBE5E7BFB4D77C53CB8.udd" 3450
 "../../../Engine/Content/EngineMeshes/Cube.uasset" 3451
 "C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/9/3/5/TEXTURE_814DCC3DC72143F49509781513CB9855_BGRA8_8A9D9D2A48FA9339997AE79343CFD87__6E53AEB85A1CEED333B46798B5D732E0DB5F7973.udd" 3452
@@ -3458,15 +3458,15 @@
 "../../../Engine/Content/Tutorial/SubEditors/TutorialAssets/T_SmokeSubUV_8X8.uasset" 3458
 "../../../Engine/Content/Tutorial/SubEditors/TutorialAssets/T_soft_smoke.uasset" 3459
 "C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/4/6/3/TEXTURE_814DCC3DC72143F49509781513CB9855_AUTODXT_91A201FE4781221C42DEDE91696E4__389E3E4629443564C58A30B0EE957E4A834EE893.udd" 3460
-"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/1/7/6/TEXTURE_814DCC3DC72143F49509781513CB9855_DXT1_A1C52E6A43A1109B0752B4B5980EA23D__1505695EACEF450B2360F157025789324808F0DA.udd" 3461
-"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/0/5/3/TEXTURE_814DCC3DC72143F49509781513CB9855_DXT1_A1C52E6A43A1109B0752B4B5980EA23D__19C07A42E8FFF97ABC69C34699A576D945BD4355.udd" 3462
-"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/6/2/3/TEXTURE_814DCC3DC72143F49509781513CB9855_AUTODXT_91A201FE4781221C42DEDE91696E4__3DBDECE29606A698D5C4A0999706EDB1D150A05A.udd" 3463
-"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/5/7/5/TEXTURE_814DCC3DC72143F49509781513CB9855_DXT1_A1C52E6A43A1109B0752B4B5980EA23D__13B1A9B7BAD5E041E94F1297BAC2994831BCC747.udd" 3464
-"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/6/4/5/TEXTURE_814DCC3DC72143F49509781513CB9855_AUTODXT_91A201FE4781221C42DEDE91696E4__728CB71FAFD2E4C073DBD859949037CB00598117.udd" 3465
-"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/0/1/7/TEXTURE_814DCC3DC72143F49509781513CB9855_DXT1_A1C52E6A43A1109B0752B4B5980EA23D__47F65D18336D505959807819EE470740C5B0779E.udd" 3466
-"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/6/9/3/TEXTURE_814DCC3DC72143F49509781513CB9855_AUTODXT_91A201FE4781221C42DEDE91696E4__10B419121147129CD66800CC97EDE0AD2FF2BC3B.udd" 3467
-"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/2/4/3/TEXTURE_814DCC3DC72143F49509781513CB9855_AUTODXT_3648AA2A4A658DE90371B081D8DC7__79EA3066C05F876B5B83AAF3F2792679C0B0BD18.udd" 3468
-"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/4/9/7/TEXTURE_814DCC3DC72143F49509781513CB9855_AUTODXT_3648AA2A4A658DE90371B081D8DC7__7E6587768D291C2DD39DBF683F7B093F6EEEA5B0.udd" 3469
+"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/6/2/3/TEXTURE_814DCC3DC72143F49509781513CB9855_AUTODXT_91A201FE4781221C42DEDE91696E4__3DBDECE29606A698D5C4A0999706EDB1D150A05A.udd" 3461
+"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/1/7/6/TEXTURE_814DCC3DC72143F49509781513CB9855_DXT1_A1C52E6A43A1109B0752B4B5980EA23D__1505695EACEF450B2360F157025789324808F0DA.udd" 3462
+"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/6/4/5/TEXTURE_814DCC3DC72143F49509781513CB9855_AUTODXT_91A201FE4781221C42DEDE91696E4__728CB71FAFD2E4C073DBD859949037CB00598117.udd" 3463
+"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/6/9/3/TEXTURE_814DCC3DC72143F49509781513CB9855_AUTODXT_91A201FE4781221C42DEDE91696E4__10B419121147129CD66800CC97EDE0AD2FF2BC3B.udd" 3464
+"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/0/5/3/TEXTURE_814DCC3DC72143F49509781513CB9855_DXT1_A1C52E6A43A1109B0752B4B5980EA23D__19C07A42E8FFF97ABC69C34699A576D945BD4355.udd" 3465
+"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/2/4/3/TEXTURE_814DCC3DC72143F49509781513CB9855_AUTODXT_3648AA2A4A658DE90371B081D8DC7__79EA3066C05F876B5B83AAF3F2792679C0B0BD18.udd" 3466
+"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/5/7/5/TEXTURE_814DCC3DC72143F49509781513CB9855_DXT1_A1C52E6A43A1109B0752B4B5980EA23D__13B1A9B7BAD5E041E94F1297BAC2994831BCC747.udd" 3467
+"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/4/9/7/TEXTURE_814DCC3DC72143F49509781513CB9855_AUTODXT_3648AA2A4A658DE90371B081D8DC7__7E6587768D291C2DD39DBF683F7B093F6EEEA5B0.udd" 3468
+"C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/0/1/7/TEXTURE_814DCC3DC72143F49509781513CB9855_DXT1_A1C52E6A43A1109B0752B4B5980EA23D__47F65D18336D505959807819EE470740C5B0779E.udd" 3469
 "C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/8/5/2/TEXTURE_814DCC3DC72143F49509781513CB9855_AUTODXT_3648AA2A4A658DE90371B081D8DC7__A0C5FAA70C9D1F7FBDCF20FBA9C2B95CACCFBAC6.udd" 3470
 "C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/5/9/9/TEXTURE_814DCC3DC72143F49509781513CB9855_AUTODXT_3648AA2A4A658DE90371B081D8DC7__9209AC813937D05A33648E084F51F5CDEDFAA6F7.udd" 3471
 "C:/Users/asus/AppData/Local/UnrealEngine/Common/DerivedDataCache/2/3/0/TEXTURE_814DCC3DC72143F49509781513CB9855_AUTODXT_3648AA2A4A658DE90371B081D8DC7__9024C3FF7AA8FAC8E5F28E06510B42EAEFCD0F19.udd" 3472

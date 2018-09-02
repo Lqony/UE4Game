@@ -1702,6 +1702,7 @@ void ASPPawnCPP::ClearStrongAttack()
 void ASPPawnCPP::ApplyForces(float DeltaTime)
 {
 	FVector current_location;
+	float l_BounceForce = 0.0f;
 	
 		if (Forces.X != 0.0f) {
 			current_location = GetActorLocation();
@@ -1709,6 +1710,7 @@ void ASPPawnCPP::ApplyForces(float DeltaTime)
 			if (!SetActorLocation(current_location, true, nullptr)) {
 				if (IsStun() && (Forces.X > 200.0f || Forces.X < -200.0f)) {
 					Forces.X = -Forces.X;
+					Forces.X >= 0.0f ? l_BounceForce = Forces.X : l_BounceForce = -Forces.X;
 				}
 				else {
 					Forces.X = 0.0f;
@@ -1726,6 +1728,9 @@ void ASPPawnCPP::ApplyForces(float DeltaTime)
 				}
 				if (IsStun() && (Forces.Y > 200.0f || Forces.Y < -200.0f)) {
 					Forces.Y = -Forces.Y;
+					float l_BounceForce2;
+					Forces.Y >= 0.0f ? l_BounceForce2 = Forces.Y : l_BounceForce2 = -Forces.Y;
+					if (l_BounceForce < l_BounceForce2) l_BounceForce = l_BounceForce2;
 				}
 				else {
 					Forces.Y = 0.0f;
@@ -1744,6 +1749,8 @@ void ASPPawnCPP::ApplyForces(float DeltaTime)
 					CallLeaveGround();
 			}
 		}
+
+		if (l_BounceForce > 0.0f) SlowTimeByForce(l_BounceForce);
 
 }
 
@@ -2244,9 +2251,6 @@ void ASPPawnCPP::GetHit_Implementation(float hitstun, float damage, FVector knoc
 		ClientInjuries = WorkData.Injuries;
 
 		if (!States.DEFENCE || WorkData.CurrentDefence == 0.0f) {
-			if (knockback.Z >= 400.0f) {
-				SetTimeChange(4, 1.0f);
-			}
 			WorkData.WasHit = true;
 			ClearStatesWhileHit();
 
@@ -2586,6 +2590,21 @@ void ASPPawnCPP::ManageTimeChange(float DeltaTime)
 	}
 }
 
+void ASPPawnCPP::SlowTimeByForce(float force)
+{	
+	if (force < 0.0f) force = -force;
+
+	float l_TimeChange = force / 200.0f;
+	float l_LastFor = (force / 1000.0f) * 0.3f;
+
+	if (l_TimeChange < 1.0f) {
+		l_TimeChange = 1.0f;
+	}
+	else {
+		SetTimeChange(l_TimeChange, l_LastFor);
+	}
+}
+
 void ASPPawnCPP::Client_Move_Implementation(FVector2D n_Position, int index)
 {
 	if (!HasAuthority()) {
@@ -2793,9 +2812,6 @@ bool ASPPawnCPP::Client_StopStrongAttack_Validate(FVector2D n_Position, int Stro
 void ASPPawnCPP::Client_GetHit_Implementation(FVector2D n_Position, FVector n_KnockBack, float n_HitStun)
 {
 	if (!HasAuthority()) {
-		if (n_KnockBack.Z >= 400.0f) {
-			SetTimeChange(4, 1.0f);
-		}
 		FVector CurrentPosition;
 		CurrentPosition.X = n_Position.X;
 		CurrentPosition.Z = n_Position.Y;
