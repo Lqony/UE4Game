@@ -118,14 +118,10 @@ ASPPawnCPP::ASPPawnCPP()
 	LastKeyStates.JUMP_KEY = false;
 	LastKeyStates.DEFENCE_KEY = false;
 
-	KeyTimers.FireLeftUp = false;
-	KeyTimers.FireLeftDown = false;
-	KeyTimers.FireRightUp = false;
-	KeyTimers.FireRightDown = false;
-	KeyTimers.FireUpUp = false;
-	KeyTimers.FireUpDown = false;
-	KeyTimers.FireDownUp = false;
-	KeyTimers.FireDownDown = false;
+	for (int i = 0; i < 20; i++) {
+		KeyTimers.KeyDelta[i] = 0.0f;
+		KeyTimers.KeyID[i] = -1;
+	}
 
 	Attributes.MaxGravity = 0.0f;
 }
@@ -1473,6 +1469,9 @@ void ASPPawnCPP::UpdateTimers(float DeltaTime)
 	if (HasAuthority() && WorkData.DelayTimer) {
 		ManageDelay(DeltaTime / WorkData.TimeChange);
 	}
+	if (HasAuthority()) {
+		ManageServerKeyStates(DeltaTime);
+	}
 	if (WorkData.TimeTimer) {
 		ManageTimeChange(DeltaTime);
 	}
@@ -2361,14 +2360,6 @@ void ASPPawnCPP::LooseStock_Implementation()
 	LastKeyStates.JUMP_KEY = false;
 	LastKeyStates.DEFENCE_KEY = false;
 
-	KeyTimers.FireLeftUp = false;
-	KeyTimers.FireLeftDown = false;
-	KeyTimers.FireRightUp = false;
-	KeyTimers.FireRightDown = false;
-	KeyTimers.FireUpUp = false;
-	KeyTimers.FireUpDown = false;
-	KeyTimers.FireDownUp = false;
-	KeyTimers.FireDownDown = false;
 	SetUpIdle();
 }
 
@@ -2556,6 +2547,326 @@ bool ASPPawnCPP::CanDash()
 	else {
 		return true;
 	}
+}
+
+void ASPPawnCPP::SetLeftKey(bool state)
+{
+
+	if (!HasAuthority()) {
+		if (KeyStates.LEFT_KEY != state)
+		KeyStates.LEFT_KEY = state;
+	}
+	else if (KeyStates.LEFT_KEY != state) {
+
+		float PingDelta = 0.01f;
+
+		AController *check = UGameplayStatics::GetPlayerController(GetWorld(), 1);
+		if (IsValid(check)) {
+			APlayerState *check2 = check->PlayerState;
+			if (IsValid(check2))
+			{
+				PingDelta = check->PlayerState->ExactPing / 2.0f + 0.01f;
+				PingDelta /= 1000.0f;
+			}
+		}
+
+		if (state) {
+			SetNextServerKeyState(14, PingDelta);
+			
+		}
+		else {
+			SetNextServerKeyState(15, PingDelta);
+		}
+	}
+}
+void ASPPawnCPP::SetRightKey(bool state)
+{
+	{
+
+		if (!HasAuthority()) {
+			if(KeyStates.RIGHT_KEY != state)
+			KeyStates.RIGHT_KEY = state;
+		}
+		else  if (KeyStates.RIGHT_KEY != state) {
+
+			float PingDelta = 0.01f;
+
+			AController *check = UGameplayStatics::GetPlayerController(GetWorld(), 1);
+			if (IsValid(check)) {
+				APlayerState *check2 = check->PlayerState;
+				if (IsValid(check2))
+				{
+					PingDelta = check->PlayerState->ExactPing / 2.0f + 0.01f;
+					PingDelta /= 1000.0f;
+				}
+			}
+
+			if (state) {
+				SetNextServerKeyState(12, PingDelta);
+			}
+			else {
+				SetNextServerKeyState(13, PingDelta);
+			}
+		}
+	};
+}
+
+void ASPPawnCPP::SetUpKey(bool state)
+{
+
+	if (!HasAuthority()) {
+		if (KeyStates.UP_KEY != state)
+		KeyStates.UP_KEY = state;
+	}
+	else if (KeyStates.UP_KEY != state) {
+
+		float PingDelta = 0.01f;
+
+		AController *check = UGameplayStatics::GetPlayerController(GetWorld(), 1);
+		if (IsValid(check)) {
+			APlayerState *check2 = check->PlayerState;
+			if (IsValid(check2))
+			{
+				PingDelta = check->PlayerState->ExactPing / 2.0f + 0.01f;
+				PingDelta /= 1000.0f;
+			}
+		}
+
+		if (state) {
+			SetNextServerKeyState(10, PingDelta);
+		}
+		else {
+			SetNextServerKeyState(11, PingDelta);
+		}
+	}
+}
+void ASPPawnCPP::SetDownKey(bool state)
+{
+
+	if (!HasAuthority()) {
+		if (KeyStates.DOWN_KEY != state)
+		KeyStates.DOWN_KEY = state;
+	}
+	else if (KeyStates.DOWN_KEY != state) {
+
+		float PingDelta = 0.01f;
+
+		AController *check = UGameplayStatics::GetPlayerController(GetWorld(), 1);
+		if (IsValid(check)) {
+			APlayerState *check2 = check->PlayerState;
+			if (IsValid(check2))
+			{
+				PingDelta = check->PlayerState->ExactPing / 2.0f + 0.01f;
+				PingDelta /= 1000.0f;
+			}
+		}
+
+		if (state) {
+			SetNextServerKeyState(8, PingDelta);
+
+		}
+		else {
+			SetNextServerKeyState(9, PingDelta);
+		}
+	}
+}
+
+void ASPPawnCPP::SetLAttackKey(bool state)
+{
+
+	if (!HasAuthority()) {
+		KeyStates.LATTACK_KEY = state;
+	}
+	else {
+
+		float PingDelta = 0.01f;
+
+		AController *check = UGameplayStatics::GetPlayerController(GetWorld(), 1);
+		if (IsValid(check)) {
+			APlayerState *check2 = check->PlayerState;
+			if (IsValid(check2))
+			{
+				PingDelta = check->PlayerState->ExactPing / 2.0f + 0.01f;
+				PingDelta /= 1000.0f;
+			}
+		}
+
+		if (state) {
+			SetNextServerKeyState(6, PingDelta);
+		}
+		else {
+			SetNextServerKeyState(7, PingDelta);
+		}
+	}
+}
+
+void ASPPawnCPP::SetSAttackKey(bool state)
+{
+
+
+	if (!HasAuthority()) {
+		KeyStates.SATTACK_KEY = state;
+	}
+	else  {
+
+		float PingDelta = 0.01f;
+
+		AController *check = UGameplayStatics::GetPlayerController(GetWorld(), 1);
+		if (IsValid(check)) {
+			APlayerState *check2 = check->PlayerState;
+			if (IsValid(check2))
+			{
+				PingDelta = check->PlayerState->ExactPing / 2.0f + 0.01f;
+				PingDelta /= 1000.0f;
+			}
+		}
+
+		if (state) {
+			SetNextServerKeyState(4, PingDelta);
+		}
+		else {
+			SetNextServerKeyState(5, PingDelta);
+		}
+	}
+}
+
+void ASPPawnCPP::SetDefenceKey(bool state)
+{
+	if (!HasAuthority()) {
+		KeyStates.DEFENCE_KEY = state;
+	}
+	else  {
+
+		float PingDelta = 0.01f;
+
+		AController *check = UGameplayStatics::GetPlayerController(GetWorld(), 1);
+		if (IsValid(check)) {
+			APlayerState *check2 = check->PlayerState;
+			if (IsValid(check2))
+			{
+				PingDelta = check->PlayerState->ExactPing / 2.0f + 0.01f;
+				PingDelta /= 1000.0f;
+			}
+		}
+		if (state) {
+			SetNextServerKeyState(0, PingDelta);
+		}
+		else {
+			SetNextServerKeyState(1, PingDelta);
+		}
+	}
+}
+
+void ASPPawnCPP::SetJumpKey(bool state)
+{
+
+	if (!HasAuthority()) {
+		KeyStates.JUMP_KEY = state;
+	}
+	else {
+
+		float PingDelta = 0.01f;
+
+		AController *check = UGameplayStatics::GetPlayerController(GetWorld(), 1);
+		if (IsValid(check)) {
+			APlayerState *check2 = check->PlayerState;
+			if (IsValid(check2))
+			{
+				PingDelta = check->PlayerState->ExactPing / 2.0f + 0.01f;
+				PingDelta /= 1000.0f;
+			}
+		}
+
+		if (state) {
+			SetNextServerKeyState(2, PingDelta);
+		}
+		else {
+			SetNextServerKeyState(3, PingDelta);
+		}
+	}
+}
+
+void ASPPawnCPP::ManageServerKeyStates(float DeltaTime)
+{
+	if (HasAuthority()) {
+		for (int i = 0; i < 20; i++) {
+			if (KeyTimers.KeyDelta[i] > 0.0f) {
+				KeyTimers.KeyDelta[i] -= DeltaTime;
+				if (KeyTimers.KeyDelta[i] <= 0.0f) {
+					KeyTimers.KeyDelta[i] = 0.0f;
+					ChangeServerKeyState(KeyTimers.KeyID[i]);
+				}
+			}
+		}
+	}
+}
+
+void ASPPawnCPP::ChangeServerKeyState(int ID)
+{
+
+	switch (ID) {
+		case 0:
+			KeyStates.DEFENCE_KEY = true;
+		break;
+		case 1:
+			KeyStates.DEFENCE_KEY = false;
+		break;
+		case 2:
+			KeyStates.JUMP_KEY = true;
+			break;
+		case 3:
+			KeyStates.JUMP_KEY = false;
+			break;
+		case 4:
+			KeyStates.SATTACK_KEY = true;
+			break;
+		case 5:
+			KeyStates.SATTACK_KEY = false;
+			break;
+		case 6:
+			KeyStates.LATTACK_KEY = true;
+			break;
+		case 7:
+			KeyStates.LATTACK_KEY = false;
+			break;
+		case 8:
+			KeyStates.DOWN_KEY = true;
+			break;
+		case 9:
+			KeyStates.DOWN_KEY = false;
+			break;
+		case 10:
+			KeyStates.UP_KEY = true;
+			break;
+		case 11:
+			KeyStates.UP_KEY = false;
+			break;
+		case 12:
+			KeyStates.RIGHT_KEY = true;
+			break;
+		case 13:
+			KeyStates.RIGHT_KEY = false;
+			break;
+		case 14:
+			KeyStates.LEFT_KEY = true;
+			break;
+		case 15:
+			KeyStates.LEFT_KEY = false;
+			break;
+	}
+}
+
+void ASPPawnCPP::SetNextServerKeyState(int ID, float DeltaTime)
+{
+	for (int i = 0; i < 20; i++) {
+		if (KeyTimers.KeyDelta[i] == 0.0f) {
+			KeyTimers.KeyDelta[i] = DeltaTime;
+			KeyTimers.KeyID[i] = ID;
+			i = 20;
+			break;
+		}
+	}
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, "SERVER KEY COMMAND QUE FULL. COMMAND SKIPPED");
 }
 
 void ASPPawnCPP::CheckYDirection()

@@ -236,32 +236,9 @@ USTRUCT(BlueprintType)
 struct FSPServerKeys {
 
 	GENERATED_BODY()
-	
-	FTimerHandle DefenceKeyDown;
-	FTimerHandle DefenceKeyUp;
-	FTimerHandle JumpKeyDown;
-	FTimerHandle JumpKeyUp;
-	FTimerHandle SAttackKeyDown;
-	FTimerHandle SAttackKeyUp;
-	FTimerHandle LAttackKeyDown;
-	FTimerHandle LAttackKeyUp;
 
-	FTimerHandle DownKeyDown;
-	bool FireDownDown;
-	FTimerHandle DownKeyUp;
-	bool FireDownUp;
-	FTimerHandle UpKeyDown;
-	bool FireUpDown;
-	FTimerHandle UpKeyUp;
-	bool FireUpUp;
-	FTimerHandle RightKeyDown;
-	bool FireRightDown;
-	FTimerHandle RightKeyUp;
-	bool FireRightUp;
-	FTimerHandle LeftKeyDown;
-	bool FireLeftDown;
-	FTimerHandle LeftKeyUp;
-	bool FireLeftUp;
+	float KeyDelta[20];
+	int KeyID[20];
 };
 
 USTRUCT(BlueprintType)
@@ -843,283 +820,27 @@ public:
 	bool CanDash();
 
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
-		void SetLeftKey(bool state) { 
-		 
-		if (!HasAuthority()) {
-			KeyStates.LEFT_KEY = state;
-		}
-		else if(KeyStates.LEFT_KEY != state){
-
-			float PingDelta = 0.01f;
-
-			AController *check = UGameplayStatics::GetPlayerController(GetWorld(), 1);
-			if (IsValid(check)) {
-				APlayerState *check2 = check->PlayerState;
-				if (IsValid(check2))
-				{
-					PingDelta = check->PlayerState->ExactPing / 2.0f + 0.01f;
-					PingDelta /= 1000.0f;
-				}
-			}
-
-			if (state) {
-				if (!KeyTimers.FireLeftDown) {
-					GetWorldTimerManager().SetTimer(KeyTimers.LeftKeyDown, this, &ASPPawnCPP::LeftKeyDown, PingDelta, false);
-					KeyTimers.FireLeftDown = true;
-				}
-				
-			}
-			else {
-				if (!KeyTimers.FireLeftUp) {
-					GetWorldTimerManager().SetTimer(KeyTimers.LeftKeyUp, this, &ASPPawnCPP::LeftKeyUp, PingDelta, false);
-					KeyTimers.FireLeftUp = true;
-				}	
-			}
-		}
-	};
+		void SetLeftKey(bool state);
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
-		void SetRightKey(bool state) { 
-		
-		if (!HasAuthority()) {
-			KeyStates.RIGHT_KEY = state;
-		}
-		else if (KeyStates.RIGHT_KEY != state) {
-
-			float PingDelta = 0.01f;
-
-			AController *check = UGameplayStatics::GetPlayerController(GetWorld(), 1);
-			if (IsValid(check)) {
-				APlayerState *check2 = check->PlayerState;
-				if (IsValid(check2))
-				{
-					PingDelta = check->PlayerState->ExactPing / 2.0f + 0.01f;
-					PingDelta /= 1000.0f;
-				}
-			}
-
-			if (state) {
-				if (!KeyTimers.FireRightDown) {
-					GetWorldTimerManager().SetTimer(KeyTimers.RightKeyDown, this, &ASPPawnCPP::RightKeyDown, PingDelta, false);
-					KeyTimers.FireRightDown = true;
-				}
-			}
-			else{
-				if (!KeyTimers.FireRightUp) {
-					GetWorldTimerManager().SetTimer(KeyTimers.RightKeyUp, this, &ASPPawnCPP::RightKeyUp, PingDelta, false);
-					KeyTimers.FireRightUp = true;
-				}
-			}
-		}
-	};
+		void SetRightKey(bool state);
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
-		void SetUpKey(bool state) { 
-		
-		if (!HasAuthority()) {
-			KeyStates.UP_KEY = state;
-		}
-		else if (KeyStates.UP_KEY != state) {
-
-			float PingDelta = 0.01f;
-
-			AController *check = UGameplayStatics::GetPlayerController(GetWorld(), 1);
-			if (IsValid(check)) {
-				APlayerState *check2 = check->PlayerState;
-				if (IsValid(check2))
-				{
-					PingDelta = check->PlayerState->ExactPing / 2.0f + 0.01f;
-					PingDelta /= 1000.0f;
-				}
-			}
-
-			if (state) {
-				if (!KeyTimers.FireUpDown) {
-					GetWorldTimerManager().SetTimer(KeyTimers.UpKeyDown, this, &ASPPawnCPP::UpKeyDown, PingDelta, false);
-					KeyTimers.FireUpDown = true;
-				}
-			}
-			else  {
-				if (!KeyTimers.FireUpUp) {
-					GetWorldTimerManager().SetTimer(KeyTimers.UpKeyUp, this, &ASPPawnCPP::UpKeyUp, PingDelta, false);
-					KeyTimers.FireUpUp = true;
-				}
-				
-			}
-		}
-	};
+		void SetUpKey(bool state);
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
-		void SetDownKey(bool state) { 
-		
-		if (!HasAuthority()) {
-			KeyStates.DOWN_KEY = state;
-		}
-		else if (KeyStates.DOWN_KEY != state) {
-
-			float PingDelta = 0.01f;
-
-			AController *check = UGameplayStatics::GetPlayerController(GetWorld(), 1);
-			if (IsValid(check)) {
-				APlayerState *check2 = check->PlayerState;
-				if (IsValid(check2))
-				{
-					PingDelta = check->PlayerState->ExactPing / 2.0f + 0.01f;
-					PingDelta /= 1000.0f;
-				}
-			}
-
-			if (state ) {
-				if (!KeyTimers.FireDownDown) {
-					GetWorldTimerManager().SetTimer(KeyTimers.DownKeyDown, this, &ASPPawnCPP::DownKeyDown, PingDelta, false);
-					KeyTimers.FireDownDown = true;
-				}
-				
-			}
-			else{
-				if (!KeyTimers.FireDownUp) {
-					GetWorldTimerManager().SetTimer(KeyTimers.DownKeyUp, this, &ASPPawnCPP::DownKeyUp, PingDelta, false);
-					KeyTimers.FireDownUp = true;
-				}
-				
-			}
-		}
-	};
+		void SetDownKey(bool state);
 
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
-		void SetLAttackKey(bool state) {
-		
-		if (!HasAuthority()) {
-			KeyStates.LATTACK_KEY = state;
-		}
-		else if (KeyStates.LATTACK_KEY != state) {
-
-			float PingDelta = 0.01f;
-
-			AController *check = UGameplayStatics::GetPlayerController(GetWorld(), 1);
-			if (IsValid(check)) {
-				APlayerState *check2 = check->PlayerState;
-				if (IsValid(check2))
-				{
-					PingDelta = check->PlayerState->ExactPing / 2.0f + 0.01f;
-					PingDelta /= 1000.0f;
-				}
-			}
-
-			if (state) {
-				GetWorldTimerManager().SetTimer(KeyTimers.LAttackKeyDown, this, &ASPPawnCPP::LAttackKeyDown, PingDelta, false);
-			}
-			else {
-				GetWorldTimerManager().SetTimer(KeyTimers.LAttackKeyUp, this, &ASPPawnCPP::LAttackKeyUp, PingDelta, false);
-			}
-		}
-	};
+		void SetLAttackKey(bool state);
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
-		void SetSAttackKey(bool state) { 
-		
-
-		if (!HasAuthority()) {
-			KeyStates.SATTACK_KEY = state;
-		}
-		else if (KeyStates.SATTACK_KEY != state) {
-
-			float PingDelta = 0.01f;
-
-			AController *check = UGameplayStatics::GetPlayerController(GetWorld(), 1);
-			if (IsValid(check)) {
-				APlayerState *check2 = check->PlayerState;
-				if (IsValid(check2))
-				{
-					PingDelta = check->PlayerState->ExactPing / 2.0f + 0.01f;
-					PingDelta /= 1000.0f;
-				}
-			}
-
-			if (state) {
-				GetWorldTimerManager().SetTimer(KeyTimers.SAttackKeyDown, this, &ASPPawnCPP::SAttackKeyDown, PingDelta, false);
-			}
-			else {
-				GetWorldTimerManager().SetTimer(KeyTimers.SAttackKeyUp, this, &ASPPawnCPP::SAttackKeyUp, PingDelta, false);
-			}
-		}
-	};
+		void SetSAttackKey(bool state);
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
-		void SetDefenceKey(bool state) { 
-		if (!HasAuthority()) {
-			KeyStates.DEFENCE_KEY = state;
-		}
-		else if (KeyStates.DEFENCE_KEY != state) {
-			
-			float PingDelta = 0.01f;
-
-			AController *check = UGameplayStatics::GetPlayerController(GetWorld(), 1);
-			if (IsValid(check)) {
-				APlayerState *check2 = check->PlayerState;
-				if (IsValid(check2))
-				{
-					PingDelta = check->PlayerState->ExactPing / 2.0f + 0.01f;
-					PingDelta /= 1000.0f;
-				}
-			}
-			if (state) {
-				GetWorldTimerManager().SetTimer(KeyTimers.DefenceKeyDown, this, &ASPPawnCPP::DefenceKeyDown, PingDelta, false);
-			}
-			else {
-				GetWorldTimerManager().SetTimer(KeyTimers.DefenceKeyUp, this, &ASPPawnCPP::DefenceKeyUp, PingDelta, false);
-			}
-		}
-	};
+		void SetDefenceKey(bool state);
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
-		void SetJumpKey(bool state) { 
-		
-		if (!HasAuthority()) {
-			KeyStates.JUMP_KEY = state;
-		}
-		else if (KeyStates.JUMP_KEY != state) {
-
-			float PingDelta = 0.01f;
-
-			AController *check = UGameplayStatics::GetPlayerController(GetWorld(), 1);
-			if (IsValid(check)) {
-				APlayerState *check2 = check->PlayerState;
-				if (IsValid(check2))
-				{
-					PingDelta = check->PlayerState->ExactPing / 2.0f + 0.01f;
-					PingDelta /= 1000.0f;
-				}
-			}
-
-			if (state) {
-				GetWorldTimerManager().SetTimer(KeyTimers.JumpKeyDown, this, &ASPPawnCPP::JumpKeyDown, PingDelta, false);
-			}
-			else {
-				GetWorldTimerManager().SetTimer(KeyTimers.JumpKeyUp, this, &ASPPawnCPP::JumpKeyUp, PingDelta, false);
-			}
-		}
-	};
+		void SetJumpKey(bool state);
 
 	
-		void DefenceKeyUp() { KeyStates.DEFENCE_KEY = false; };
-		void DefenceKeyDown() { KeyStates.DEFENCE_KEY = true; };
-
-		void JumpKeyUp() { KeyStates.JUMP_KEY = false; };
-		void JumpKeyDown() { KeyStates.JUMP_KEY = true; };
-
-		void SAttackKeyUp() { KeyStates.SATTACK_KEY = false; };
-		void SAttackKeyDown() { KeyStates.SATTACK_KEY = true; };
-
-		void LAttackKeyUp() { KeyStates.LATTACK_KEY = false; };
-		void LAttackKeyDown() { KeyStates.LATTACK_KEY = true; };
-
-		void DownKeyUp() { KeyStates.DOWN_KEY = false; KeyTimers.FireDownUp = false;};
-		void DownKeyDown() { KeyStates.DOWN_KEY = true; KeyTimers.FireDownDown = false;};
-
-		void UpKeyUp() { KeyStates.UP_KEY = false; KeyTimers.FireUpUp = false;};
-		void UpKeyDown() { KeyStates.UP_KEY = true; KeyTimers.FireUpDown = false;};
-
-		void RightKeyUp() { KeyStates.RIGHT_KEY = false; KeyTimers.FireRightUp = false;};
-		void RightKeyDown() { KeyStates.RIGHT_KEY = true; KeyTimers.FireRightDown = false;};
-
-		void LeftKeyUp() { KeyStates.LEFT_KEY = false; KeyTimers.FireLeftUp = false; };
-		void LeftKeyDown() { KeyStates.LEFT_KEY = true; KeyTimers.FireLeftDown = false;
-		};
+		void ManageServerKeyStates(float DeltaTime);
+		void ChangeServerKeyState(int ID);
+		void SetNextServerKeyState(int ID, float DeltaTime);
 
 		void CheckYDirection();
 
