@@ -319,6 +319,13 @@ struct FSPWorkData {
 		bool YUp;
 		//Aerial recovery
 		bool UpB;
+
+		//So we can slow down or speed up time (only for pawn)
+		bool TimeTimer;
+		float TimeTimerDelta;
+		float TimeTimerGoal;
+		float TimeChange;
+		float CurrentPlayRate;
 };
 
 USTRUCT(BlueprintType)
@@ -1115,4 +1122,15 @@ public:
 		};
 
 		void CheckYDirection();
+
+		UFUNCTION(BlueprintCallable, Category = SuperFighter)
+			void SetTimeChange(float NewTime, float LastFor) { WorkData.TimeChange = NewTime; WorkData.TimeTimer = true; 
+		WorkData.TimeTimerDelta = 0.0f; WorkData.TimeTimerGoal = LastFor; animation->SetPlayRate(WorkData.CurrentPlayRate / WorkData.TimeChange);
+		}
+		UFUNCTION(BlueprintCallable, Category = SuperFighter)
+			float TimeChange() { return WorkData.TimeChange; }
+		UFUNCTION(BlueprintCallable, Category = SuperFighter)
+			void SetCurrentPlayRate(float rate);
+
+		void ManageTimeChange(float DeltaTime);
 };
