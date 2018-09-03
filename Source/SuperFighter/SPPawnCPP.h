@@ -439,6 +439,15 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
 		void ResetForces(bool n_X, bool n_Y) { if (n_X) Forces.X = 0.0f; if (n_Y) Forces.Y = 0.0f;};
 
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class ASPHitBoxCPP> BPHitBoxClass;
+
+	UFUNCTION(BlueprintCallable, Category = SuperFighter)
+		//Will check if FacingLeft and will change xmodifier to -xmodifier and force.x tp - force.x if so, Loc Z is radius
+		void CreateHitBox(FVector LocationModifier, FVector Force, float ActivationTime, float DestroyTime,
+			bool FriendlyFire, bool MultiHit, float Damage, float HitStun, bool followPlayer);
+		ASPHitBoxCPP* SpawnHitBox(FSPHitBoxDetails Details);
+
 	//ACTIONS---------------------------------------------------------
 	float DelayActionTime;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)

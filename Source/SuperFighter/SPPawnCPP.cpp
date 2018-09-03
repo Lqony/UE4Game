@@ -502,6 +502,61 @@ void ASPPawnCPP::ResetRestrictions()
 	States.CAN_STRONG_ATTACK = true;
 }
 
+void ASPPawnCPP::CreateHitBox(FVector LocationModifier, FVector Force, float ActivationTime, float DestroyTime, bool 
+	FriendlyFire, bool MultiHit, float Damage, float HitStun, bool followPlayer)
+{
+	FSPHitBoxDetails Details;
+	FVector CurrentPosition;
+	FVector2D FolowDistance;
+	if (!FacingRight()) {
+		LocationModifier.X = -LocationModifier.X;
+		Force.X = -Force.X;
+	}
+
+	if (Force.X != 0.0f && Forces.X != 0.0f) {
+		if ((Force.X > 0.0f && Forces.X > 0.0f) || (Force.X < 0.0f && Forces.X < 0.0f)) {
+			Force.X += Forces.X / Force.Z;
+		}
+	}
+	if (Force.Y != 0.0f && Forces.Y != 0.0f) {
+		if ((Force.Y > 0.0f && Forces.Y > 0.0f) || (Force.Y < 0.0f && Forces.Y < 0.0f)) {
+			Force.Y += Forces.Y / Force.Z;
+		}
+	}
+
+	CurrentPosition = GetActorLocation();
+	FolowDistance.X = LocationModifier.X;
+	FolowDistance.Y = LocationModifier.Y;
+	LocationModifier.X += CurrentPosition.X;
+	LocationModifier.Y += CurrentPosition.Z;
+
+	Details.Position = LocationModifier;
+	Details.Force = Force;
+	Details.ActivationTime = ActivationTime;
+	Details.DestroyTime = DestroyTime;
+	Details.FriendlyFire = FriendlyFire;
+	Details.MultiHit = MultiHit;
+	Details.Owner = this;
+	Details.Damage = Damage;
+	Details.HitStun = HitStun;
+	Details.FollowPlayer = followPlayer;
+	Details.FollowDistance = FolowDistance;
+
+	SpawnHitBox(Details);
+}
+
+ASPHitBoxCPP * ASPPawnCPP::SpawnHitBox(FSPHitBoxDetails Details)
+{	
+	ASPHitBoxCPP *HitBox;
+	FVector Location(0.0f, 0.0f, 0.0f);
+	FRotator Rotation(0.0f, 0.0f, 0.0f);
+	FActorSpawnParameters SpawnInfo;
+	SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	HitBox = GetWorld()->SpawnActor<ASPHitBoxCPP>(BPHitBoxClass, Location, Rotation, SpawnInfo);
+	HitBox->SetHitbox(Details);
+	return HitBox;
+}
+
 void ASPPawnCPP::DodgeBlink_Implementation(bool start)
 {
 	if (start) {
@@ -2865,8 +2920,11 @@ void ASPPawnCPP::SetNextServerKeyState(int ID, float DeltaTime)
 			i = 20;
 			break;
 		}
+		if (i == 19) {
+			GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, "SERVER KEY COMMAND QUE FULL. COMMAND SKIPPED");
+		}
 	}
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, "SERVER KEY COMMAND QUE FULL. COMMAND SKIPPED");
+	
 }
 
 void ASPPawnCPP::CheckYDirection()
@@ -2905,8 +2963,8 @@ void ASPPawnCPP::SlowTimeByForce(float force)
 {	
 	if (force < 0.0f) force = -force;
 
-	float l_TimeChange = force / 200.0f;
-	float l_LastFor = (force / 1000.0f) * 0.3f;
+	float l_TimeChange = force / 150.0f;
+	float l_LastFor = 0.1f + ((force / 2000.0f) * 0.1f);
 
 	if (l_TimeChange < 1.0f) {
 		l_TimeChange = 1.0f;
