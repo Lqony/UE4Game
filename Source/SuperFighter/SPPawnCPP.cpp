@@ -487,7 +487,7 @@ void ASPPawnCPP::ResetRestrictions()
 	States.CAN_STRONG_ATTACK = true;
 }
 
-void ASPPawnCPP::CreateHitBox(FVector LocationModifier, FVector Force, float ActivationTime, float DestroyTime, bool 
+ASPHitBoxCPP* ASPPawnCPP::CreateHitBox(FVector LocationModifier, FVector Force, float ActivationTime, float DestroyTime, bool
 	FriendlyFire, bool MultiHit, float Damage, float HitStun, bool followPlayer)
 {
 	FSPHitBoxDetails Details;
@@ -527,7 +527,7 @@ void ASPPawnCPP::CreateHitBox(FVector LocationModifier, FVector Force, float Act
 	Details.FollowPlayer = followPlayer;
 	Details.FollowDistance = FolowDistance;
 
-	SpawnHitBox(Details);
+	return SpawnHitBox(Details);
 }
 
 ASPHitBoxCPP * ASPPawnCPP::SpawnHitBox(FSPHitBoxDetails Details)
