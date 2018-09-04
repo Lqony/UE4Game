@@ -43,9 +43,6 @@ ASPPawnCPP::ASPPawnCPP()
 	WorkData.DefenceDelta = 0.0f;
 	WorkData.JumpTimer = false;
 	WorkData.JumpTimerDelta = 0.0f;
-	WorkData.LightAttackTimer = false;
-	WorkData.LightAttackTimerDelta = 0.0f;
-	WorkData.LightAttackTimerGoal = 0.0f;
 	WorkData.StrongAttackTimer = false;
 	WorkData.StrongAttackTimerDelta = 0.0f;
 	WorkData.DashTimer = false;
@@ -397,18 +394,6 @@ void ASPPawnCPP::ManageJump(float DeltaTime)
 		WorkData.JumpTimerDelta = 0.0f;
 		WorkData.JumpTimer = false;
 		StopJump();
-	}
-}
-
-void ASPPawnCPP::ManageLightAttack(float DeltaTime)
-{
-	WorkData.LightAttackTimerDelta += DeltaTime;
-	if (WorkData.LightAttackTimerDelta >= WorkData.LightAttackTimerGoal) {
-		WorkData.LightAttackTimerDelta = 0.0f;
-		WorkData.LightAttackTimerGoal = 0.0f;
-		WorkData.LightAttackTimer = false;
-
-		EndLightAttack();
 	}
 }
 
@@ -826,6 +811,7 @@ void ASPPawnCPP::LightAttack(int index)
 {
 	if (HasAuthority()) {
 		if (CanLightAttack()) {
+			StartLightAttack();
 			if (index == 0) {
 				FVector2D CurrentAxis = AxisPosition();
 				FVector2D AbsCurrentAxis;
@@ -898,6 +884,7 @@ void ASPPawnCPP::LightAttack(int index)
 		}
 	}
 	else {
+		StartLightAttack();
 		switch (index) {
 		case 0:
 			ActionLightAttack.ExecuteIfBound();
@@ -1096,14 +1083,12 @@ void ASPPawnCPP::ReleaseStrongAttack()
 {
 	if (HasAuthority()) {
 		if (CanReleaseStrongAttack()) {
-			ClearStrongAttack();
 			ActionRealeaseStrongAttack.ExecuteIfBound();
 			Client_StopStrongAttack(GetSendPosition(), WorkData.StrongAttackMeter);
 		}
 	}
 	else {
 		if (CanReleaseStrongAttack()) {
-			ClearStrongAttack();
 			ActionRealeaseStrongAttack.ExecuteIfBound();
 			WorkData.ClientTimer = false;
 		}
@@ -1495,7 +1480,6 @@ void ASPPawnCPP::ClearStatesWhileHit()
 		}
 
 		WorkData.DelayTimer = false;
-		WorkData.LightAttackTimer = false;
 		WorkData.StrongAttackTimer = false;
 		WorkData.JumpTimer = false;
 }
@@ -1508,9 +1492,6 @@ void ASPPawnCPP::UpdateTimers(float DeltaTime)
 	}
 	if (WorkData.JumpTimer) {
 		ManageJump(DeltaTime / WorkData.TimeChange);
-	}
-	if (WorkData.LightAttackTimer) {
-		ManageLightAttack(DeltaTime / WorkData.TimeChange);
 	}
 	if (WorkData.StrongAttackTimer) {
 		ManageStrongAttack(DeltaTime / WorkData.TimeChange);
@@ -1669,7 +1650,7 @@ void ASPPawnCPP::DashColdown()
 
 }
 
-void ASPPawnCPP::StartLightAttack(float time)
+void ASPPawnCPP::StartLightAttack()
 {
 		if (!States.LIGHT_ATTACK) States.LIGHT_ATTACK = true;
 
@@ -1686,32 +1667,12 @@ void ASPPawnCPP::StartLightAttack(float time)
 		if (States.JUMP_RIGHT_WALL) {
 			States.JUMP_RIGHT_WALL = false;
 			WorkData.JumpTimer = false;
-		}
-
-		WorkData.LightAttackTimer = false;
-		
-		if (!HasAuthority()) {
-			WorkData.ClientTimer = false;
-
-			float PingDelta = GetWorld()->GetFirstPlayerController()->PlayerState->Ping * 2.0f;
-			PingDelta /= 1000.0f;
-			WorkData.LightAttackTimer = true;
-			WorkData.LightAttackTimerDelta = 0.0f;
-			WorkData.LightAttackTimerGoal = time - PingDelta;
-		}
-		else {
-			WorkData.LightAttackTimer = true;
-			WorkData.LightAttackTimerDelta = 0.0f;
-			WorkData.LightAttackTimerGoal = time;
-		}
-			
+		}		
 }
 
 void ASPPawnCPP::EndLightAttack()
 {
 		if (States.LIGHT_ATTACK) States.LIGHT_ATTACK = false;
-	
-		WorkData.LightAttackTimer = false;
 }
 
 void ASPPawnCPP::SetUpStrongAttack()
@@ -1734,7 +1695,6 @@ void ASPPawnCPP::SetUpStrongAttack()
 		}
 		if (States.LIGHT_ATTACK) {
 			States.LIGHT_ATTACK = false;
-			WorkData.LightAttackTimer = false;
 		}
 		
 		WorkData.StrongAttackMeter = 0;
@@ -2317,6 +2277,7 @@ void ASPPawnCPP::GetHit_Implementation(float hitstun, float damage, FVector knoc
 
 			knockback.Z += knockback.Z / (100.0f / (WorkData.Injuries * 0.4f));
 			WorkData.HitForce = knockback;
+			SlowTimeAfterHit(knockback.Z);
 			Client_GetHit(GetSendPosition(), knockback, WorkData.HitStun);
 		}
 	}
@@ -2354,9 +2315,6 @@ void ASPPawnCPP::LooseStock_Implementation()
 	WorkData.DefenceDelta = 0.0f;
 	WorkData.JumpTimer = false;
 	WorkData.JumpTimerDelta = 0.0f;
-	WorkData.LightAttackTimer = false;
-	WorkData.LightAttackTimerDelta = 0.0f;
-	WorkData.LightAttackTimerGoal = 0.0f;
 	WorkData.StrongAttackTimer = false;
 	WorkData.StrongAttackTimerDelta = 0.0f;
 	WorkData.DashTimer = false;
@@ -2963,14 +2921,27 @@ void ASPPawnCPP::SlowTimeByForce(float force)
 {	
 	if (force < 0.0f) force = -force;
 
-	float l_TimeChange = force / 150.0f;
-	float l_LastFor = 0.1f + ((force / 2000.0f) * 0.1f);
+	float l_TimeChange = force / 50.0f;
+	float l_LastFor = 0.2f + ((force / 500.0f) * 0.1);
 
-	if (l_TimeChange < 1.0f) {
+	if (l_TimeChange <= 1.0f) {
 		l_TimeChange = 1.0f;
 	}
 	else {
 		SetTimeChange(l_TimeChange, l_LastFor);
+	}
+}
+
+void ASPPawnCPP::SlowTimeAfterHit(float force)
+{
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), this->StaticClass(), FoundActors);
+
+	int i = 0;
+	while (FoundActors.IsValidIndex(i)) {
+		ASPPawnCPP *LocalPawn = Cast<ASPPawnCPP>(FoundActors[i]);
+		LocalPawn->SlowTimeByForce(force);
+		i++;
 	}
 }
 
@@ -3193,6 +3164,8 @@ void ASPPawnCPP::Client_GetHit_Implementation(FVector2D n_Position, FVector n_Kn
 		PingDelta /= 1000.0f;
 		WorkData.HitStun = n_HitStun - PingDelta;
 		ClearStatesWhileHit();
+
+		SlowTimeAfterHit(n_KnockBack.Z);
 	}
 }
 

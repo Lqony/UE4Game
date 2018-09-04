@@ -269,10 +269,6 @@ struct FSPWorkData {
 		bool JumpTimer;
 		float JumpTimerDelta;
 
-		bool LightAttackTimer;
-		float LightAttackTimerDelta;
-		float LightAttackTimerGoal;
-
 		bool StrongAttackTimer;
 		float StrongAttackTimerDelta;
 
@@ -405,11 +401,13 @@ protected:
 	void StopDash();
 	void DashColdown();
 
+	
+	void StartLightAttack();
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
-	void StartLightAttack(float time);
 	void EndLightAttack();
 
 	void SetUpStrongAttack();
+	UFUNCTION(BlueprintCallable, Category = SuperFighter)
 	void ClearStrongAttack();
 	void UpgradeStrongAttackMeter();
 
@@ -865,4 +863,5 @@ public:
 		void ManageTimeChange(float DeltaTime);
 		UFUNCTION(BlueprintCallable, Category = SuperFighter)
 		void SlowTimeByForce(float force);
+		void SlowTimeAfterHit(float force);
 };
