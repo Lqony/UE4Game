@@ -25,12 +25,18 @@ void ASPHitBoxCPP::SetHitbox(FSPHitBoxDetails l_details)
 		Details = l_details;
 		MainBody->SetSphereRadius(Details.Position.Z);
 		this->SetActorLocation(FVector(Details.Position.X, 0.0f, Details.Position.Y), false);
-		GetWorldTimerManager().SetTimer(WorkData.ActivationTimer, this, &ASPHitBoxCPP::ActivateHitBox, Details.ActivationTime + 0.01f, false);
 		MainBody->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		Animation->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		MissileDetails.Missile = false;
 		MissileDetails.Launched = false;
 		HideAnimation();
+
+		if (Details.ActivationTime < 0.01f) {
+			ActivateHitBox();
+		}
+		else {
+			GetWorldTimerManager().SetTimer(WorkData.ActivationTimer, this, &ASPHitBoxCPP::ActivateHitBox, Details.ActivationTime, false);
+		}
 	}
 		
 }

@@ -132,6 +132,7 @@ public:
 	void UpdateMissile(float DeltaTime);
 
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
+		//Set Missile Before SetHitBox
 		void SetMissile();
 
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)

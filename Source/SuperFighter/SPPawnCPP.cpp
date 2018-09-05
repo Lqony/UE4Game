@@ -2921,8 +2921,8 @@ void ASPPawnCPP::SlowTimeByForce(float force)
 {	
 	if (force < 0.0f) force = -force;
 
-	float l_TimeChange = force / 50.0f;
-	float l_LastFor = 0.2f + ((force / 500.0f) * 0.1);
+	float l_TimeChange = force / 10.0f;
+	float l_LastFor = 0.1f + ((force / 1000.0f) * 0.1);
 
 	if (l_TimeChange <= 1.0f) {
 		l_TimeChange = 1.0f;
