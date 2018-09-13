@@ -8,6 +8,7 @@
 #include "Net/UnrealNetwork.h"
 #include <cmath>
 #include "SPHitBoxCPP.h"
+#include "CreatureMeshComponent.h"
 #include "SPPawnCPP.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE(FActionFunction);
@@ -109,13 +110,20 @@ struct FSPAnimationDetails {
 		FVector2D CollisionBox;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		//MeshRelativeLocation
 		FVector2D FlipbookRelativeLocation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		FVector2D HitBoxRelativeLocation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		UPaperFlipbook *Flipbook;
+		FString AnimationName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float AnimationSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool Loop;
 };
 
 USTRUCT(BlueprintType)
@@ -533,7 +541,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = SuperFighter)
 		UBoxComponent *hit_box;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = SuperFighter)
-		UPaperFlipbookComponent *animation;
+		UCreatureMeshComponent *creature_mesh;
 
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
 		void Jump();
@@ -852,8 +860,10 @@ public:
 		void CheckYDirection();
 
 		UFUNCTION(BlueprintCallable, Category = SuperFighter)
-			void SetTimeChange(float NewTime, float LastFor) { WorkData.TimeChange = NewTime; WorkData.TimeTimer = true; 
-		WorkData.TimeTimerDelta = 0.0f; WorkData.TimeTimerGoal = LastFor; animation->SetPlayRate(WorkData.CurrentPlayRate / WorkData.TimeChange);
+			void SetTimeChange(float NewTime, float LastFor) { 
+			WorkData.TimeChange = NewTime; WorkData.TimeTimer = true; 
+			WorkData.TimeTimerDelta = 0.0f; WorkData.TimeTimerGoal = LastFor; 
+			creature_mesh->animation_speed = WorkData.CurrentPlayRate / WorkData.TimeChange;
 		}
 		UFUNCTION(BlueprintCallable, Category = SuperFighter)
 			float TimeChange() { return WorkData.TimeChange; }

@@ -14,9 +14,10 @@ ASPPawnCPP::ASPPawnCPP()
 	hit_box = CreateDefaultSubobject<UBoxComponent>(TEXT("Hit_Box"));
 	hit_box->SetupAttachment(RootComponent);
 	hit_box->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
-	animation = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("Animation"));
-	animation->SetupAttachment(RootComponent);
-	animation->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
+
+	creature_mesh = CreateDefaultSubobject<UCreatureMeshComponent>(TEXT("Mesh"));
+	creature_mesh->SetupAttachment(RootComponent);
+	creature_mesh->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
 
 	Forces.X = 0.0f;
 	Forces.Y = 0.0f;
@@ -545,10 +546,12 @@ ASPHitBoxCPP * ASPPawnCPP::SpawnHitBox(FSPHitBoxDetails Details)
 void ASPPawnCPP::DodgeBlink_Implementation(bool start)
 {
 	if (start) {
-		animation->SetSpriteColor(FLinearColor(0.2f, 0.2f, 0.2f, 1.0f));
+		//animation->SetSpriteColor(FLinearColor(0.2f, 0.2f, 0.2f, 1.0f));
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, "FIX DODGE BLINK");
+		
 	}
 	else {
-		animation->SetSpriteColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
+		//animation->SetSpriteColor(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
 	}
 }
 
@@ -1317,30 +1320,34 @@ void ASPPawnCPP::ChangeAnimation(FSPAnimationDetails details)
 	collision_box->SetBoxExtent(FVector(details.CollisionBox.X, 10, details.CollisionBox.Y), true);
 	hit_box->SetBoxExtent(FVector(details.HitBox.X, 10, details.HitBox.Y), true);
 	hit_box->SetRelativeLocation(FVector(details.HitBoxRelativeLocation.X, 0.0f, details.HitBoxRelativeLocation.Y));
-	animation->SetFlipbook(details.Flipbook);
+
+	SetCurrentPlayRate(details.AnimationSpeed);
+	creature_mesh->SetBluePrintAnimationLoop(details.Loop);
+	creature_mesh->SetBluePrintBlendActiveAnimation(details.AnimationName, 0.1f);
+	
+	
+	
 	if (WorkData.FacingRight) {
-		animation->SetRelativeLocation(FVector(details.FlipbookRelativeLocation.X, 0.0f, details.FlipbookRelativeLocation.Y));
+		creature_mesh->SetRelativeLocation(FVector(details.FlipbookRelativeLocation.X, 0.0f, details.FlipbookRelativeLocation.Y));
 	}
 	else {
-		animation->SetRelativeLocation(FVector(details.FlipbookRelativeLocation.X*-1.0f, 0.0f, details.FlipbookRelativeLocation.Y));
+		creature_mesh->SetRelativeLocation(FVector(details.FlipbookRelativeLocation.X*-1.0f, 0.0f, details.FlipbookRelativeLocation.Y));
 	}
-	animation->PlayFromStart();
-	animation->OnFinishedPlaying.Clear();
 }
 
 void ASPPawnCPP::QuickChangeAnimation(UPaperFlipbook * Flipbook, FVector2D HitBox)
 {
 	hit_box->SetBoxExtent(FVector(HitBox.X, 10, HitBox.Y), true);
-	animation->SetFlipbook(Flipbook);
-	animation->PlayFromStart();
+	//animation->SetFlipbook(Flipbook);
+	//animation->PlayFromStart();
 }
 
 void ASPPawnCPP::ChangeAnimationWithLocation(UPaperFlipbook * Flipbook, FVector2D HitBox, FVector2D RelativeLocation)
 {
 	hit_box->SetBoxExtent(FVector(HitBox.X, 10, HitBox.Y), true);
-	animation->SetFlipbook(Flipbook);
-	animation->SetRelativeLocation(FVector(RelativeLocation.X, 0.0f, RelativeLocation.Y));
-	animation->PlayFromStart();
+	//animation->SetFlipbook(Flipbook);
+	//animation->SetRelativeLocation(FVector(RelativeLocation.X, 0.0f, RelativeLocation.Y));
+	//animation->PlayFromStart();
 }
 
 void ASPPawnCPP::ChangeMovementSpeed(float speed)
@@ -1490,7 +1497,7 @@ void ASPPawnCPP::UpdateTimers(float DeltaTime)
 	if (IsStun()) {
 		ManageStunState(DeltaTime / WorkData.TimeChange);
 	}
-	if (WorkData.JumpTimer) {
+	if (WorkData.JumpTimer && WorkData.JumpStart) {
 		ManageJump(DeltaTime / WorkData.TimeChange);
 	}
 	if (WorkData.StrongAttackTimer) {
@@ -2120,8 +2127,12 @@ void ASPPawnCPP::Move(bool right)
 				if (!WorkData.FacingRight) {
 					FRotator rotation(0.0f, 0.0f, 0.0f);
 					WorkData.FacingRight = true;
-					animation->SetRelativeRotation(rotation, false);
-					animation->SetRelativeLocation(FVector(animation->RelativeLocation.X*-1.0f, 0.0f, animation->RelativeLocation.Z));
+					
+					//creature_mesh->SetRelativeRotation(rotation, false);
+					FVector RelScale = creature_mesh->RelativeScale3D;
+					if (RelScale.X < 0) RelScale.X *= -1;
+					creature_mesh->SetRelativeScale3D(RelScale);
+					creature_mesh->SetRelativeLocation(FVector(creature_mesh->RelativeLocation.X*-1.0f, 0.0f, creature_mesh->RelativeLocation.Z));
 				}
 				if (HasAuthority()) {
 					Client_Move(GetSendPosition(), 0);
@@ -2133,8 +2144,12 @@ void ASPPawnCPP::Move(bool right)
 				if (WorkData.FacingRight) {
 					FRotator rotation(0.0f, 180.0f, 0.0f);
 					WorkData.FacingRight = false;
-					animation->SetRelativeRotation(rotation, false);
-					animation->SetRelativeLocation(FVector(animation->RelativeLocation.X*-1.0f, 0.0f, animation->RelativeLocation.Z));
+					
+					//creature_mesh->SetRelativeRotation(rotation, false);
+					FVector RelScale = creature_mesh->RelativeScale3D;
+					if (RelScale.X > 0) RelScale.X *= -1;
+					creature_mesh->SetRelativeScale3D(RelScale);
+					creature_mesh->SetRelativeLocation(FVector(creature_mesh->RelativeLocation.X*-1.0f, 0.0f, creature_mesh->RelativeLocation.Z));
 				}
 				if (HasAuthority()) {
 					Client_Move(GetSendPosition(), 1);
@@ -2302,8 +2317,13 @@ void ASPPawnCPP::LooseStock_Implementation()
 
 	WorkData.FacingRight = true;
 	FRotator rotation(0.0f, 0.0f, 0.0f);
-	animation->SetRelativeRotation(rotation, false);
-	animation->SetRelativeLocation(FVector(animation->RelativeLocation.X*-1.0f, 0.0f, animation->RelativeLocation.Z));
+
+	//creature_mesh->SetRelativeRotation(rotation, false);
+	FVector RelScale = creature_mesh->RelativeScale3D;
+	if (RelScale.X < 0) RelScale.X *= -1;
+	creature_mesh->SetRelativeScale3D(RelScale);
+	creature_mesh->SetRelativeLocation(FVector(creature_mesh->RelativeLocation.X*-1.0f, 0.0f, creature_mesh->RelativeLocation.Z));
+
 	WorkData.Injuries = 0;
 	WorkData.StrongAttackMeter = 0;
 	WorkData.HitStun = 0.0f;
@@ -2904,7 +2924,7 @@ void ASPPawnCPP::CheckYDirection()
 void ASPPawnCPP::SetCurrentPlayRate(float rate)
 {
 	WorkData.CurrentPlayRate = rate;
-	animation->SetPlayRate(WorkData.CurrentPlayRate / WorkData.TimeChange);
+	creature_mesh->animation_speed = WorkData.CurrentPlayRate / WorkData.TimeChange;
 }
 
 void ASPPawnCPP::ManageTimeChange(float DeltaTime)
@@ -2913,7 +2933,7 @@ void ASPPawnCPP::ManageTimeChange(float DeltaTime)
 	if (WorkData.TimeTimerDelta >= WorkData.TimeTimerGoal) {
 		WorkData.TimeTimer = false;
 		WorkData.TimeChange = 1.0f;
-		animation->SetPlayRate(WorkData.CurrentPlayRate);
+		creature_mesh->animation_speed = WorkData.CurrentPlayRate;
 	}
 }
 
