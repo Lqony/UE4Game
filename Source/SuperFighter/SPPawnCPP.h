@@ -88,15 +88,28 @@ USTRUCT(BlueprintType)
 struct FSPKeyStates {
 	GENERATED_BODY()
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 	bool LEFT_KEY;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 	bool RIGHT_KEY;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 	bool UP_KEY;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 	bool DOWN_KEY;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 	bool LATTACK_KEY;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 	bool SATTACK_KEY;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 	bool JUMP_KEY;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 	bool DEFENCE_KEY;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
+		bool SUPER_LEFT_KEY;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
+		bool  SUPER_RIGHT_KEY;
 };
 
 USTRUCT(BlueprintType)
@@ -163,6 +176,8 @@ struct FSPPawnAttributes {
 		float JumpTime = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 		float MaxGravity = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
+		float LaunchJumpTime = 0;
 };
 
 USTRUCT(BlueprintType)
@@ -238,6 +253,9 @@ struct FSPPawnStates {
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 		bool AFFECTED_BY_GRAVITY = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
+		bool SUPER_MOVE = false;
 };
 
 USTRUCT(BlueprintType)
@@ -294,8 +312,12 @@ struct FSPWorkData {
 		float DelayTimerDelta;
 		float DelayTimerGoal;
 
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 		//So we can run pre-jump animation
 		bool JumpStart;
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
+		//If we jumped at least a bit
+		bool HasJumped;
 		//So we can check if Y direction was changed
 		bool YUp;
 		//Aerial recovery
@@ -337,8 +359,6 @@ class SUPERFIGHTER_API ASPPawnCPP : public APawn
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
-	FSPPanActions Actions;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 	FVector2D Forces;
 	UPROPERTY(Replicated, EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 		FSPPawnAttributes Attributes;
@@ -359,7 +379,9 @@ protected:
 	UPROPERTY(ReplicatedUsing = RepNot_UpdateInjuries, EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 		int ClientInjuries;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 	FSPKeyStates KeyStates;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 	FSPKeyStates LastKeyStates;
 	FSPServerKeys KeyTimers;
 
@@ -375,7 +397,7 @@ protected:
 		void SetAttributes(FSPPawnAttributes new_attributes);
 
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
-		void Move(bool right);
+		void Move(bool right, bool super);
 
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
 		void StopMove();
@@ -520,6 +542,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 		//When Y Forces Goes from + to - (or from 0 to + or from 0 to -)
 		FActionFunction ActionYDirectionChange;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
+		//For Run When XAxis is >. 0.8
+		FActionFunction ActionSuperMove;
 	//END ACTIONS -----------------------------------------------------
 
 public:
@@ -686,6 +712,12 @@ public:
 	UFUNCTION(Server, unreliable, WithValidation, BlueprintCallable, Category = SuperFighter)
 		void Server_MoveRight();
 
+	UFUNCTION(Server, unreliable, WithValidation, BlueprintCallable, Category = SuperFighter)
+		void Server_SuperMoveLeft();
+
+	UFUNCTION(Server, unreliable, WithValidation, BlueprintCallable, Category = SuperFighter)
+		void Server_SuperMoveRight();
+
 	UFUNCTION(Server, reliable, WithValidation, BlueprintCallable, Category = SuperFighter)
 		void Server_StopMove();
 
@@ -735,7 +767,7 @@ public:
 		void Client_Dash(FVector2D n_Position, int index /*0 - side dash, 1 - up dash, 2 - down dash, 3 - spot dodge*/);
 
 	UFUNCTION(NetMulticast, reliable, WithValidation, Category = SuperFighter)
-		void Client_Move(FVector2D n_Position, int index /*0 - right, 1 - left*/);
+		void Client_Move(FVector2D n_Position, int index /*0 - right, 1 - left*/, bool super);
 
 	UFUNCTION(NetMulticast, reliable, WithValidation, Category = SuperFighter)
 		void Client_StopMove(FVector2D n_Position);
@@ -802,6 +834,7 @@ public:
 		//Called after pre-jump animation is done
 		void StartJump() {
 		WorkData.JumpStart = true;
+		WorkData.HasJumped = false;
 	};
 
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
@@ -834,6 +867,10 @@ public:
 	bool CanReleaseDefence();
 	bool CanDash();
 
+	UFUNCTION(BlueprintCallable, Category = SuperFighter)
+		void SetSuperLeftKey(bool state);
+	UFUNCTION(BlueprintCallable, Category = SuperFighter)
+		void SetSuperRightKey(bool state);
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
 		void SetLeftKey(bool state);
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)

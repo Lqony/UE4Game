@@ -61,6 +61,7 @@ ASPPawnCPP::ASPPawnCPP()
 	WorkData.DelayTimerGoal = 0.0f;
 
 	WorkData.JumpStart = false;
+	WorkData.HasJumped = false;
 	WorkData.YUp = true;
 	WorkData.UpB = true;
 
@@ -75,6 +76,7 @@ ASPPawnCPP::ASPPawnCPP()
 	
 	States.MOVE_RIGHT = false;
 	States.MOVE_LEFT = false;
+	States.SUPER_MOVE = false;
 	States.JUMP = false;
 	States.JUMP_LEFT_WALL = false;
 	States.JUMP_RIGHT_WALL = false;
@@ -98,6 +100,8 @@ ASPPawnCPP::ASPPawnCPP()
 
 	KeyStates.LEFT_KEY = false;
 	KeyStates.RIGHT_KEY = false;
+	KeyStates.SUPER_LEFT_KEY = false;
+	KeyStates.SUPER_RIGHT_KEY = false;
 	KeyStates.UP_KEY = false;
 	KeyStates.DOWN_KEY = false;
 
@@ -108,6 +112,8 @@ ASPPawnCPP::ASPPawnCPP()
 
 	LastKeyStates.LEFT_KEY = false;
 	LastKeyStates.RIGHT_KEY = false;
+	LastKeyStates.SUPER_LEFT_KEY = false;
+	LastKeyStates.SUPER_RIGHT_KEY = false;
 	LastKeyStates.UP_KEY = false;
 	LastKeyStates.DOWN_KEY = false;
 
@@ -283,7 +289,7 @@ void ASPPawnCPP::RepNot_UpdateInjuries()
 
 void ASPPawnCPP::Server_MoveRight_Implementation()
 {
-	Move(true);
+	Move(true, false);
 }
 
 bool ASPPawnCPP::Server_MoveRight_Validate()
@@ -293,10 +299,30 @@ bool ASPPawnCPP::Server_MoveRight_Validate()
 
 void ASPPawnCPP::Server_MoveLeft_Implementation()
 {
-	Move(false);
+	Move(false, false);
 }
 
 bool ASPPawnCPP::Server_MoveLeft_Validate()
+{
+	return true;
+}
+
+void ASPPawnCPP::Server_SuperMoveRight_Implementation()
+{
+	Move(true, true);
+}
+
+bool ASPPawnCPP::Server_SuperMoveRight_Validate()
+{
+	return true;
+}
+
+void ASPPawnCPP::Server_SuperMoveLeft_Implementation()
+{
+	Move(false, true);
+}
+
+bool ASPPawnCPP::Server_SuperMoveLeft_Validate()
 {
 	return true;
 }
@@ -391,7 +417,11 @@ void ASPPawnCPP::ManageDefence(float DeltaTime)
 void ASPPawnCPP::ManageJump(float DeltaTime)
 {
 	WorkData.JumpTimerDelta += DeltaTime;
-	if (WorkData.JumpTimerDelta >= Attributes.JumpTime) {
+	if (!WorkData.JumpStart && WorkData.JumpTimerDelta >= Attributes.LaunchJumpTime) {
+		WorkData.JumpTimerDelta = 0.0f;
+		StartJump();
+	}
+	else if (WorkData.JumpTimerDelta >= Attributes.JumpTime) {
 		WorkData.JumpTimerDelta = 0.0f;
 		WorkData.JumpTimer = false;
 		StopJump();
@@ -672,10 +702,10 @@ void ASPPawnCPP::Server_Move_Implementation(float AxisX)
 				StopMove();
 			}
 			else if (AxisX > 0.2f && !States.MOVE_RIGHT) {
-				Move(true);
+				Move(true, false);
 			}
 			else if (AxisX < -0.2f && !States.MOVE_LEFT) {
-				Move(false);
+				Move(false, false);
 			}
 		}
 	}
@@ -710,6 +740,9 @@ void ASPPawnCPP::Jump()
 					
 					ActionJump.ExecuteIfBound();
 					Client_Jump(GetSendPosition(), 0);
+
+					WorkData.JumpStart = false;
+					WorkData.HasJumped = false;
 				}
 				else if (GroundNextToFeet(true)) {
 					if (!States.JUMP_RIGHT_WALL) States.JUMP_RIGHT_WALL = true;
@@ -719,6 +752,9 @@ void ASPPawnCPP::Jump()
 
 					ActionJump.ExecuteIfBound();
 					Client_Jump(GetSendPosition(), 1);
+
+					WorkData.JumpStart = false;
+					WorkData.HasJumped = false;
 				}
 				else if (GroundNextToFeet(false)) {
 					if(!States.JUMP_LEFT_WALL) States.JUMP_LEFT_WALL = true;
@@ -728,6 +764,9 @@ void ASPPawnCPP::Jump()
 
 					ActionJump.ExecuteIfBound();
 					Client_Jump(GetSendPosition(), 2);
+
+					WorkData.JumpStart = false;
+					WorkData.HasJumped = false;
 				}
 				else if (WorkData.AirJumped < Attributes.AirJumpAmount) {
 					WorkData.AirJumped++;
@@ -739,6 +778,9 @@ void ASPPawnCPP::Jump()
 
 						ActionJump.ExecuteIfBound();
 						Client_Jump(GetSendPosition(), 1);
+
+						WorkData.JumpStart = false;
+						WorkData.HasJumped = false;
 					}
 					else if (States.MOVE_RIGHT) {
 						if(!States.JUMP_LEFT_WALL) States.JUMP_LEFT_WALL = true;
@@ -748,6 +790,9 @@ void ASPPawnCPP::Jump()
 
 						ActionJump.ExecuteIfBound();
 						Client_Jump(GetSendPosition(), 2);
+
+						WorkData.JumpStart = false;
+						WorkData.HasJumped = false;
 					}
 					else {
 						if(!States.JUMP) States.JUMP = true;
@@ -757,11 +802,17 @@ void ASPPawnCPP::Jump()
 
 						ActionJump.ExecuteIfBound();
 						Client_Jump(GetSendPosition(), 0);
+
+						WorkData.JumpStart = false;
+						WorkData.HasJumped = false;
 					}
 			}
 		}
 	}
 	else {
+		WorkData.JumpStart = false;
+		WorkData.HasJumped = false;
+
 		WorkData.JumpTimer = true;
 		WorkData.JumpTimerDelta = 0.0f;
 
@@ -807,6 +858,7 @@ void ASPPawnCPP::StopJump()
 			
 			WorkData.JumpTimer = false;
 			WorkData.JumpStart = false;
+			WorkData.HasJumped = false;
 	}
 }
 
@@ -1365,7 +1417,10 @@ void ASPPawnCPP::AddForce(FVector force)
 
 void ASPPawnCPP::Friction(float DeltaTime)
 {
-		if(!States.DASH && !States.MOVE_LEFT && !States.MOVE_RIGHT)
+		if( !States.DASH && 
+			( (!States.MOVE_LEFT && !States.MOVE_RIGHT) || 
+			(Attributes.MoveSpeed > 0.0f && Forces.X > Attributes.MoveSpeed) ||
+				(States.MOVE_LEFT && Attributes.MoveSpeed*-1.0f < 0.0f &&  Forces.X < Attributes.MoveSpeed*-1.0f) ) )
 		{
 			if (Forces.X > 0.0f) {
 				if (GroundUnderFeet()) {
@@ -1467,6 +1522,7 @@ void ASPPawnCPP::ClearStatesWhileHit()
 
 		if(States.MOVE_RIGHT)States.MOVE_RIGHT = false;
 		if (States.MOVE_LEFT)States.MOVE_LEFT = false;
+		if(States.SUPER_MOVE)States.SUPER_MOVE = false;
 		if (States.JUMP) {
 			States.JUMP = false;
 		}
@@ -1497,7 +1553,7 @@ void ASPPawnCPP::UpdateTimers(float DeltaTime)
 	if (IsStun()) {
 		ManageStunState(DeltaTime / WorkData.TimeChange);
 	}
-	if (WorkData.JumpTimer && WorkData.JumpStart) {
+	if (WorkData.JumpTimer) {
 		ManageJump(DeltaTime / WorkData.TimeChange);
 	}
 	if (WorkData.StrongAttackTimer) {
@@ -1583,6 +1639,7 @@ void ASPPawnCPP::SetUpDash()
 
 		if (States.MOVE_RIGHT) States.MOVE_RIGHT = false;
 		if (States.MOVE_LEFT)States.MOVE_LEFT = false;
+		if(States.SUPER_MOVE)States.SUPER_MOVE = false;
 		if (States.JUMP) {
 			States.JUMP = false;
 			WorkData.JumpTimer = false;
@@ -1663,6 +1720,7 @@ void ASPPawnCPP::StartLightAttack()
 
 		if (States.MOVE_RIGHT) States.MOVE_RIGHT = false;
 		if (States.MOVE_LEFT)States.MOVE_LEFT = false;
+		if(States.SUPER_MOVE)States.SUPER_MOVE = false;
 		if (States.JUMP) {
 			States.JUMP = false;
 			WorkData.JumpTimer = false;
@@ -1688,6 +1746,7 @@ void ASPPawnCPP::SetUpStrongAttack()
 
 		if(States.MOVE_RIGHT) States.MOVE_RIGHT = false;
 		if(States.MOVE_LEFT )States.MOVE_LEFT = false;
+		if(States.SUPER_MOVE)States.SUPER_MOVE = false;
 		if (States.JUMP) {
 			States.JUMP = false;
 			WorkData.JumpTimer = false;
@@ -1809,16 +1868,17 @@ void ASPPawnCPP::CalculateMovement(float DeltaTime)
 
 		if (States.JUMP && WorkData.JumpStart) {
 			Forces.Y = Attributes.JumpPower;
+			WorkData.HasJumped = true;
 		}
 		else if (States.JUMP_LEFT_WALL && WorkData.JumpStart) {
-
+			WorkData.HasJumped = true;
 			Forces.Y = Attributes.JumpPower / StaticAttributes.WallJumpYModifier;
 			if (Forces.X < Attributes.JumpPower / StaticAttributes.WallJumpXModifier) {
 				Forces.X = Attributes.JumpPower / StaticAttributes.WallJumpXModifier;
 			}
 		}
 		else if (States.JUMP_RIGHT_WALL && WorkData.JumpStart) {
-
+			WorkData.HasJumped = true;
 			Forces.Y = Attributes.JumpPower / StaticAttributes.WallJumpYModifier;
 			if (Forces.X > -Attributes.JumpPower / StaticAttributes.WallJumpXModifier) {
 				Forces.X = -Attributes.JumpPower / StaticAttributes.WallJumpXModifier;
@@ -1979,9 +2039,16 @@ void ASPPawnCPP::CheckKeyStates()
 				WorkData.ClientTimerStage = 1;
 			}
 		}
-		else if (!LastKeyStates.JUMP_KEY && (States.JUMP || States.JUMP_LEFT_WALL || States.JUMP_RIGHT_WALL)) {
+		else if (!KeyStates.JUMP_KEY && (States.JUMP || States.JUMP_LEFT_WALL || States.JUMP_RIGHT_WALL)) {
 			if (CanStopJump())
 				Server_StopJump();
+
+			if (!HasAuthority()) {
+				WorkData.ClientTimer = true;
+				WorkData.ClientTimerDelta = 0.0f;
+				WorkData.ClientTimerGoal = PingDelta;
+				WorkData.ClientTimerStage = 1;
+			}
 		}
 		else if (LastKeyStates.SATTACK_KEY && !KeyStates.SATTACK_KEY) {
 			if (CanReleaseStrongAttack()) {
@@ -2093,14 +2160,25 @@ void ASPPawnCPP::CheckKeyStates()
 			}
 		}
 		else if (KeyStates.RIGHT_KEY) {
-			if (!States.MOVE_RIGHT && CanMove()) {
-				Server_MoveRight();
+			if (CanMove()) {
+				if (KeyStates.SUPER_RIGHT_KEY && !States.SUPER_MOVE) {
+					Server_SuperMoveRight();
+				}
+				else if(!States.MOVE_RIGHT || (!KeyStates.SUPER_RIGHT_KEY && States.SUPER_MOVE)) {
+					Server_MoveRight();
+				}
 			}
 			
 		}
 		else if (KeyStates.LEFT_KEY) {
-			if (!States.MOVE_LEFT && CanMove())
-			Server_MoveLeft();
+			if ( CanMove()) {
+				if (KeyStates.SUPER_LEFT_KEY && !States.SUPER_MOVE) {
+					Server_SuperMoveLeft();
+				}
+				else if(!States.MOVE_LEFT || (!KeyStates.SUPER_LEFT_KEY && States.SUPER_MOVE)){
+					Server_MoveLeft();
+				}
+			}
 		}
 
 		LastKeyStates = KeyStates;
@@ -2118,12 +2196,15 @@ void ASPPawnCPP::SetAttributes(FSPPawnAttributes new_attributes)
 	ClientCurrentDefence = WorkData.CurrentDefence;
 }
 
-void ASPPawnCPP::Move(bool right)
+void ASPPawnCPP::Move(bool right, bool super)
 {
 		if (CanMove()) {
 			if (right) {
 				if(States.MOVE_LEFT) States.MOVE_LEFT = false;
 				if(!States.MOVE_RIGHT) States.MOVE_RIGHT  = true;
+				if (States.SUPER_MOVE != super) {
+					States.SUPER_MOVE = super;
+				}
 				if (!WorkData.FacingRight) {
 					FRotator rotation(0.0f, 0.0f, 0.0f);
 					WorkData.FacingRight = true;
@@ -2135,12 +2216,13 @@ void ASPPawnCPP::Move(bool right)
 					creature_mesh->SetRelativeLocation(FVector(creature_mesh->RelativeLocation.X*-1.0f, 0.0f, creature_mesh->RelativeLocation.Z));
 				}
 				if (HasAuthority()) {
-					Client_Move(GetSendPosition(), 0);
+					Client_Move(GetSendPosition(), 0, super);
 				}
 			}
 			else {
 				if (!States.MOVE_LEFT) States.MOVE_LEFT = true;
 				if (States.MOVE_RIGHT) States.MOVE_RIGHT = false;
+				if (States.SUPER_MOVE != super) States.SUPER_MOVE = super;
 				if (WorkData.FacingRight) {
 					FRotator rotation(0.0f, 180.0f, 0.0f);
 					WorkData.FacingRight = false;
@@ -2152,11 +2234,16 @@ void ASPPawnCPP::Move(bool right)
 					creature_mesh->SetRelativeLocation(FVector(creature_mesh->RelativeLocation.X*-1.0f, 0.0f, creature_mesh->RelativeLocation.Z));
 				}
 				if (HasAuthority()) {
-					Client_Move(GetSendPosition(), 1);
+					Client_Move(GetSendPosition(), 1, super);
 				}
 			}
 			
-			ActionMove.ExecuteIfBound();
+			if (super) {
+				ActionSuperMove.ExecuteIfBound();
+			}
+			else {
+				ActionMove.ExecuteIfBound();
+			}
 		}
 }
 
@@ -2166,6 +2253,7 @@ void ASPPawnCPP::StopMove()
 		if (CanStopMove()) {
 			if (States.MOVE_LEFT) States.MOVE_LEFT = false;
 			if (States.MOVE_RIGHT) States.MOVE_RIGHT = false;
+			if (States.SUPER_MOVE) States.SUPER_MOVE = false;
 			ActionStopMove.ExecuteIfBound();
 			Client_StopMove(GetSendPosition());
 		}
@@ -2174,6 +2262,7 @@ void ASPPawnCPP::StopMove()
 		if (States.MOVE_LEFT || States.MOVE_RIGHT) {
 			if (States.MOVE_LEFT) States.MOVE_LEFT = false;
 			if (States.MOVE_RIGHT) States.MOVE_RIGHT = false;
+			if (States.SUPER_MOVE) States.SUPER_MOVE = false;
 			ActionStopMove.ExecuteIfBound();
 		}
 	}
@@ -2358,6 +2447,7 @@ void ASPPawnCPP::LooseStock_Implementation()
 
 	States.MOVE_RIGHT = false;
 	States.MOVE_LEFT = false;
+	States.SUPER_MOVE = false;
 	States.JUMP = false;
 	States.JUMP_LEFT_WALL = false;
 	States.JUMP_RIGHT_WALL = false;
@@ -2375,6 +2465,8 @@ void ASPPawnCPP::LooseStock_Implementation()
 
 	KeyStates.LEFT_KEY = false;
 	KeyStates.RIGHT_KEY = false;
+	KeyStates.SUPER_LEFT_KEY = false;
+	KeyStates.SUPER_RIGHT_KEY = false;
 	KeyStates.UP_KEY = false;
 	KeyStates.DOWN_KEY = false;
 
@@ -2385,6 +2477,8 @@ void ASPPawnCPP::LooseStock_Implementation()
 
 	LastKeyStates.LEFT_KEY = false;
 	LastKeyStates.RIGHT_KEY = false;
+	LastKeyStates.SUPER_LEFT_KEY = false;
+	LastKeyStates.SUPER_RIGHT_KEY = false;
 	LastKeyStates.UP_KEY = false;
 	LastKeyStates.DOWN_KEY = false;
 
@@ -2496,7 +2590,7 @@ bool ASPPawnCPP::CanJump() {
 
 bool ASPPawnCPP::CanStopJump() { 
 	if (HasAuthority()) {
-		if (States.JUMP || States.JUMP_LEFT_WALL || States.JUMP_RIGHT_WALL) {
+		if ((States.JUMP || States.JUMP_LEFT_WALL || States.JUMP_RIGHT_WALL) && WorkData.HasJumped) {
 			return true;
 		}
 		return false;
@@ -2579,6 +2673,68 @@ bool ASPPawnCPP::CanDash()
 	}
 	else {
 		return true;
+	}
+}
+
+void ASPPawnCPP::SetSuperRightKey(bool state)
+{
+
+	if (!HasAuthority()) {
+		if (KeyStates.SUPER_RIGHT_KEY != state)
+			KeyStates.SUPER_RIGHT_KEY = state;
+	}
+	else if (KeyStates.SUPER_RIGHT_KEY != state) {
+
+		float PingDelta = 0.01f;
+
+		AController *check = UGameplayStatics::GetPlayerController(GetWorld(), 1);
+		if (IsValid(check)) {
+			APlayerState *check2 = check->PlayerState;
+			if (IsValid(check2))
+			{
+				PingDelta = check->PlayerState->ExactPing / 2.0f + 0.01f;
+				PingDelta /= 1000.0f;
+			}
+		}
+
+		if (state) {
+			SetNextServerKeyState(18, PingDelta);
+
+		}
+		else {
+			SetNextServerKeyState(19, PingDelta);
+		}
+	}
+}
+
+void ASPPawnCPP::SetSuperLeftKey(bool state)
+{
+
+	if (!HasAuthority()) {
+		if (KeyStates.SUPER_LEFT_KEY != state)
+			KeyStates.SUPER_LEFT_KEY = state;
+	}
+	else if (KeyStates.SUPER_LEFT_KEY != state) {
+
+		float PingDelta = 0.01f;
+
+		AController *check = UGameplayStatics::GetPlayerController(GetWorld(), 1);
+		if (IsValid(check)) {
+			APlayerState *check2 = check->PlayerState;
+			if (IsValid(check2))
+			{
+				PingDelta = check->PlayerState->ExactPing / 2.0f + 0.01f;
+				PingDelta /= 1000.0f;
+			}
+		}
+
+		if (state) {
+			SetNextServerKeyState(16, PingDelta);
+
+		}
+		else {
+			SetNextServerKeyState(17, PingDelta);
+		}
 	}
 }
 
@@ -2886,6 +3042,18 @@ void ASPPawnCPP::ChangeServerKeyState(int ID)
 		case 15:
 			KeyStates.LEFT_KEY = false;
 			break;
+		case 16:
+			KeyStates.SUPER_LEFT_KEY = true;
+			break;
+		case 17:
+			KeyStates.SUPER_LEFT_KEY = false;
+			break;
+		case 18:
+			KeyStates.SUPER_RIGHT_KEY = true;
+			break;
+		case 19:
+			KeyStates.SUPER_RIGHT_KEY = false;
+			break;
 	}
 }
 
@@ -2965,7 +3133,7 @@ void ASPPawnCPP::SlowTimeAfterHit(float force)
 	}
 }
 
-void ASPPawnCPP::Client_Move_Implementation(FVector2D n_Position, int index)
+void ASPPawnCPP::Client_Move_Implementation(FVector2D n_Position, int index, bool super)
 {
 	if (!HasAuthority()) {
 		FVector CurrentPosition;
@@ -2978,20 +3146,22 @@ void ASPPawnCPP::Client_Move_Implementation(FVector2D n_Position, int index)
 		case 0:
 			States.MOVE_LEFT = false;
 			States.MOVE_RIGHT = true;
-			Move(true);
+			States.SUPER_MOVE = super;
+			Move(true, super);
 			break;
 
 		case 1:
 			States.MOVE_RIGHT = false;
 			States.MOVE_LEFT = true;
-			Move(false);
+			States.SUPER_MOVE = super;
+			Move(false, super);
 			break;
 		}
 
 	}
 }
 
-bool ASPPawnCPP::Client_Move_Validate(FVector2D n_Position, int index)
+bool ASPPawnCPP::Client_Move_Validate(FVector2D n_Position, int index, bool super)
 {
 	return true;
 }
