@@ -1323,7 +1323,7 @@ void ASPPawnCPP::ChangeAnimation(FSPAnimationDetails details)
 
 	SetCurrentPlayRate(details.AnimationSpeed);
 	creature_mesh->SetBluePrintAnimationLoop(details.Loop);
-	creature_mesh->SetBluePrintBlendActiveAnimation(details.AnimationName, 0.1f);
+	creature_mesh->SetBluePrintBlendActiveAnimation(details.AnimationName, 0.5f);
 	
 	
 	
