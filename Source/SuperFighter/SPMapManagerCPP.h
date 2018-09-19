@@ -61,4 +61,7 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, Category = MapManager)
 		TArray<ASPRoomActivator1CPP*> GetActivators();
+
+	UFUNCTION(BlueprintCallable, Category = MapManager)
+		TArray<ASPRoomManagerCPP*> GetRoomManager() { return Rooms.RoomManagers; }
 };

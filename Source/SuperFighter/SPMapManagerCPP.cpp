@@ -12,7 +12,6 @@ void ASPMapManagerCPP::FinishCreating()
 		int l_activator_index = -1;
 
 		TArray<ASPRoomActivator1CPP*> l_RoomActivators = GetActivators();
-		GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Yellow, "FOUND: " + FString::SanitizeFloat(l_RoomActivators.Num()));
 
 		if (l_RoomActivators.Num() > 0) {
 
@@ -22,8 +21,6 @@ void ASPMapManagerCPP::FinishCreating()
 				Rooms.RoomActivators[l_activator_index]->Activate(l_index, Rooms.RoomLevels[l_index], PendingLocation,
 					FVector(0.0f, 0.0f, 0.0f), 0);
 			}
-
-			CreationPending = false;
 		}
 
 		/*for (int i = 0; i < l_RoomActivators.Num(); i++) {
@@ -91,6 +88,11 @@ void ASPMapManagerCPP::ManageActivators()
 			if (IsValid(Rooms.RoomActivators[i]->RoomManager)) {
 				int l_index = Rooms.RoomManagers.AddUnique(Cast<ASPRoomManagerCPP>(Rooms.RoomActivators[i]->RoomManager));
 
+				for (int i = 0; i < Rooms.RoomManagers.Num(); i++) {
+					Rooms.RoomManagers[i]->SetRoomManagersTable(Rooms.RoomManagers);
+				}
+				
+			//	Rooms.RoomManagers[l_index]->SetConnectionInfo();
 				if (l_index < 0) {
 					//CALL ERROR WE HAVE ROOM MANAGER DUPLICATE
 				}
@@ -100,6 +102,7 @@ void ASPMapManagerCPP::ManageActivators()
 
 				Rooms.RoomActivators[i]->Destroy();
 				Rooms.RoomActivators.RemoveAt(i);
+				CreationPending = false;
 			}
 		}
 	}

@@ -17,6 +17,34 @@ struct FSPRoomConnectionInfo {
 	UPROPERTY(EditAnywhere, Category = RoomManager)
 		//From Wchich Exit doors of previus room we get to this one
 		int EntraceDoorID;
+
+	UPROPERTY(EditAnywhere, Category = RoomManager)
+		//How Many Exits from this room
+		int ExitAmount;
+
+	UPROPERTY(EditAnywhere, Category = RoomManager)
+		//Exit 1 type : 1 - Left Wall(1-3tile, 2 - Floor ((n-8)-(n-5)tile), 3 - roof ((n-8)-(n-5)tile))
+		int ExitType1 = -1;
+
+	UPROPERTY(EditAnywhere, Category = RoomManager)
+		//From Wchich Exit doors of previus room we get to this one
+		int ExitType2 = -1;
+
+	UPROPERTY(EditAnywhere, Category = RoomManager)
+		//From Wchich Exit doors of previus room we get to this one
+		int ExitType3 = -1;
+};
+
+USTRUCT(BlueprintType)
+struct FSPRoomInfo {
+	GENERATED_BODY()
+
+		
+	UPROPERTY(EditAnywhere, Category = RoomManager)
+	//In tiles amount
+	int RoomWidth;
+	UPROPERTY(EditAnywhere, Category = RoomManager)
+	int RoomHeight;
 };
 
 UCLASS()
@@ -31,11 +59,21 @@ protected:
 	UPROPERTY(EditAnywhere, Category = RoomManager)
 		bool Active;
 
+	UPROPERTY(EditAnywhere, Category = RoomManager)
 	TArray<ASPRoomManagerCPP*> RoomManagers;
 
+	UPROPERTY(EditAnywhere, Category = RoomManager)
+		FSPRoomInfo Info;
+
+	UPROPERTY(EditAnywhere, Category = RoomManager)
 	FSPRoomConnectionInfo RoomConnectionInfo;
 
 	ASPRoomActivator1CPP* ChildActivator;
+
+	UFUNCTION(BLueprintNativeEvent, Category = RoomManager)
+		TArray<AActor*> SpawnTiles(int amount);
+
+	
 	
 public:	
 	// Sets default values for this actor's properties
@@ -48,6 +86,9 @@ public:
 	virtual void Tick( float DeltaSeconds ) override;
 
 	UFUNCTION(BlueprintCallable, Category = RoomManager)
+		void CreateRoom();
+
+	UFUNCTION(BlueprintCallable, Category = RoomManager)
 	bool GetActive() { return Active;  }
 	
 
@@ -55,8 +96,12 @@ public:
 		bool Activate(FSPRoomActivatorData1 _Data);
 
 	UFUNCTION(BlueprintCallable, Category = RoomManager)
-		void SetConnectionInfo(int _EntraceRoomID, int _EntraceDoorID);
+		void SetConnectionInfo(int _EntraceRoomID, int _EntraceDoorID, int _ExitAmount, TArray<int> _ExitTypes);
 
 	UFUNCTION(BlueprintCallable, Category = RoomManager)
 		void SetRoomManagersTable(TArray<ASPRoomManagerCPP*> _RoomManagers);
+
+	FSPRoomConnectionInfo *GetConnectionInfo() { return &RoomConnectionInfo; }
+
+	FSPRoomInfo* GetInfo() { return &Info; }
 };
