@@ -88,8 +88,8 @@ void ASPMapManagerCPP::ManageActivators()
 			if (IsValid(Rooms.RoomActivators[i]->RoomManager)) {
 				int l_index = Rooms.RoomManagers.AddUnique(Cast<ASPRoomManagerCPP>(Rooms.RoomActivators[i]->RoomManager));
 
-				for (int i = 0; i < Rooms.RoomManagers.Num(); i++) {
-					Rooms.RoomManagers[i]->SetRoomManagersTable(Rooms.RoomManagers);
+				for (int j = 0; j < Rooms.RoomManagers.Num(); j++) {
+					Rooms.RoomManagers[j]->SetRoomManagersTable(Rooms.RoomManagers);
 				}
 				
 			//	Rooms.RoomManagers[l_index]->SetConnectionInfo();

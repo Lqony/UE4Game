@@ -3067,7 +3067,7 @@ void ASPPawnCPP::SetNextServerKeyState(int ID, float DeltaTime)
 			break;
 		}
 		if (i == 19) {
-			GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, "SERVER KEY COMMAND QUE FULL. COMMAND SKIPPED");
+			//GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, "SERVER KEY COMMAND QUE FULL. COMMAND SKIPPED");
 		}
 	}
 	

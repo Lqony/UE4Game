@@ -13,7 +13,7 @@ struct FSPRoomConnectionInfo {
 
 	UPROPERTY(EditAnywhere, Category = RoomManager)
 		//From Wchic room we enter this one
-		int EntraceRoomID;
+		int EntraceRoomID = -1;
 	UPROPERTY(EditAnywhere, Category = RoomManager)
 		//From Wchich Exit doors of previus room we get to this one
 		int EntraceDoorID;
@@ -72,6 +72,9 @@ protected:
 
 	UFUNCTION(BLueprintNativeEvent, Category = RoomManager)
 		TArray<AActor*> SpawnTiles(int amount);
+
+	UFUNCTION(BLueprintNativeEvent, Category = RoomManager)
+	AActor* SpawnTile(FVector2D _Loc, FVector2D _Scale);
 
 	
 	

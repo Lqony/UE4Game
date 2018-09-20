@@ -5,6 +5,11 @@
 #include "SPRoomManagerCPP.h"
 
 
+AActor * ASPRoomManagerCPP::SpawnTile_Implementation(FVector2D _Loc, FVector2D _Scale)
+{
+	return nullptr;
+}
+
 // Sets default values
 ASPRoomManagerCPP::ASPRoomManagerCPP()
 {
@@ -87,169 +92,125 @@ void ASPRoomManagerCPP::CreateRoom()
 {
 	int l_room_w;
 	int l_room_h;
-	int l_tiles_amount;
-
-	TArray<AActor*> l_Tiles;
 
 	l_room_w = FMath::RandRange(20, 50);
 	l_room_h = FMath::RandRange(10, 20);
 	Info.RoomWidth = l_room_w;
 	Info.RoomHeight = l_room_h;
 
-	l_tiles_amount = ((l_room_w * 2) + (l_room_h * 2));
-
-	l_Tiles = SpawnTiles(l_tiles_amount);
-
-	for (int i = 1; i < l_room_w; i++) {
-		FVector _TileLocation = l_Tiles[i]->GetActorLocation();
-		_TileLocation.X += 20.0f * i;
-		l_Tiles[i]->SetActorLocation(_TileLocation);
-	
+	FVector l_room_location;
+	FVector2D l_wall_location;
+	FVector2D l_wall_scale;
+	//CreateLeftWal, check if there is an Entrace
+	if(RoomConnectionInfo.EntraceRoomID >= 0 && RoomConnectionInfo.EntraceDoorID == 0){
+		l_wall_location.X = 0.0f;
+		l_wall_location.Y = (((l_room_h-5.0f) / 2.0f)+4.0f)  * 20.0f;
+		l_wall_scale.X = 1.0f;
+		l_wall_scale.Y = (l_room_h - 4.0f);		
+		//Locate this room
+		l_room_location = RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetActorLocation();
+		l_room_location.X += RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetInfo()->RoomWidth * 20.0f;
 	}
-
-	for (int i = 0; i <= l_room_h; i++) {
-		FVector _TileLocation = l_Tiles[l_room_w-1]->GetActorLocation();
-		_TileLocation.Z += (20.0f * i) + 20.0f;
-		l_Tiles[l_room_w+i]->SetActorLocation(_TileLocation);
+	else {
+		l_wall_location.X = 0.0f;
+		l_wall_location.Y = ((l_room_h-1.0f)  / 2.0f)  * 20.0f;
+		l_wall_scale.X = 1.0f;
+		l_wall_scale.Y = l_room_h;
 	}
+	SpawnTile(l_wall_location, l_wall_scale);
 
-	for (int i = 1; i < l_room_w; i++) {
-		FVector _TileLocation = l_Tiles[l_room_w + l_room_h]->GetActorLocation();
-		_TileLocation.X -= 20.0f * i;
-		l_Tiles[l_room_w + l_room_h+i]->SetActorLocation(_TileLocation);
+	//CreateRightWall, check if there is an Exit
+	if (RoomConnectionInfo.ExitType1 == 0 || RoomConnectionInfo.ExitType2 == 0 || RoomConnectionInfo.ExitType3 == 0) {
+
+		l_wall_location.X = (l_room_w - 1.0f)*20.0f;
+		l_wall_location.Y = ((((l_room_h - 1.0f) - 4.0f) / 2.0f) + 4.0f)  * 20.0f;
+		l_wall_scale.X = 1.0f;
+		l_wall_scale.Y = (l_room_h - 4.0f);
 	}
-
-	for (int i = 0; i < l_room_h; i++) {
-		FVector _TileLocation = l_Tiles[l_room_w + l_room_h + l_room_w - 1]->GetActorLocation();
-		_TileLocation.Z -= (20.0f * i) + 20.0f;
-		l_Tiles[l_room_w + l_room_h + l_room_w + i]->SetActorLocation(_TileLocation);
+	else {
+		l_wall_location.X = (l_room_w - 1.0f)*20.0f;
+		l_wall_location.Y = ((l_room_h - 1.0f) / 2.0f)  * 20.0f;
+		l_wall_scale.X = 1.0f;
+		l_wall_scale.Y = l_room_h;
 	}
+	SpawnTile(l_wall_location, l_wall_scale);
 
-	if (RoomConnectionInfo.EntraceRoomID >= 0 && RoomManagers.Num() > 0) {
-		
-		if (RoomConnectionInfo.EntraceDoorID == 0) {
-			if (IsValid(RoomManagers[RoomConnectionInfo.EntraceRoomID])) {
-				FVector l_room_location = RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetActorLocation();
-				l_room_location.X += RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetInfo()->RoomWidth * 20.0f;
-				this->SetActorLocation(l_room_location);
-			}
-			
-			l_Tiles[l_tiles_amount - 1]->Destroy();
-			l_Tiles[l_tiles_amount - 2]->Destroy();
-			l_Tiles[l_tiles_amount - 3]->Destroy();
+	//CreateBootomWall, check if there is an Exit or/and Entrace
+	if (RoomConnectionInfo.EntraceRoomID >= 0 && RoomConnectionInfo.EntraceDoorID == 2) {
+		if (RoomConnectionInfo.ExitType1 == 1 || RoomConnectionInfo.ExitType2 == 1 || RoomConnectionInfo.ExitType3 == 1) {
+			//Entrace and Exit
+
+			l_wall_location.X = ((l_room_w-1) / 2.0f) *20.0f;
+			l_wall_location.Y = 0.0f;
+			l_wall_scale.X = l_room_w - 8.0f;
+			l_wall_scale.Y = 1.0f;
 		}
-		else if (RoomConnectionInfo.EntraceDoorID == 1) {
-
-			if (IsValid(RoomManagers[RoomConnectionInfo.EntraceRoomID])) {
-				FVector l_room_location = RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetActorLocation();
-				GEngine->AddOnScreenDebugMessage(-1, 4.0f, FColor::Yellow, l_room_location.ToCompactString());
-				l_room_location.X += (RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetInfo()->RoomWidth-5) * 20.0f;
-				l_room_location.Z -= ((l_room_h + 2) * 20.0f);
-				this->SetActorLocation(l_room_location);
-			}
-
-			l_Tiles[l_room_w + l_room_h + l_room_w - 2]->Destroy();
-			l_Tiles[l_room_w + l_room_h + l_room_w - 3]->Destroy();
-			l_Tiles[l_room_w + l_room_h + l_room_w - 4]->Destroy();
-		}
-		else if (RoomConnectionInfo.EntraceDoorID == 2) {
-			l_Tiles[1]->Destroy();
-			l_Tiles[2]->Destroy();
-			l_Tiles[3]->Destroy();
-
-			if (IsValid(RoomManagers[RoomConnectionInfo.EntraceRoomID])) {
-				FVector l_room_location = RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetActorLocation();
-				l_room_location.X += (RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetInfo()->RoomWidth - 5) * 20.0f;
-				l_room_location.Z += (RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetInfo()->RoomHeight + 2) * 20.0f;
-				this->SetActorLocation(l_room_location);
-			}
+		else {
+			//Just Entrace
+			l_wall_location.X = (((l_room_w - 5.0f) / 2.0f)+4.0f)   * 20.0f;
+			l_wall_location.Y = 0.0f;
+			l_wall_scale.X = l_room_w - 4.0f;
+			l_wall_scale.Y = 1.0f;
 		}
 
-
+		l_room_location = RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetActorLocation();
+		l_room_location.X += (RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetInfo()->RoomWidth - 5) * 20.0f;
+		l_room_location.Z += (RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetInfo()->RoomHeight  * 20.0f);
 	}
-	
+	else if (RoomConnectionInfo.ExitType1 == 1 || RoomConnectionInfo.ExitType2 == 1 || RoomConnectionInfo.ExitType3 == 1) {
+		//Just Exit
+		l_wall_location.X = ((l_room_w - 5.0f) / 2.0f)   * 20.0f;
+		l_wall_location.Y = 0.0f;
+		l_wall_scale.X = l_room_w - 4.0f;
+		l_wall_scale.Y = 1.0f;
+	}
+	else {	
+		l_wall_location.X = ((l_room_w - 1) /2.0f) *20.0f;
+		l_wall_location.Y = 0.0f;
+		l_wall_scale.X = l_room_w;
+		l_wall_scale.Y = 1.0f;
+	}
+	SpawnTile(l_wall_location, l_wall_scale);
 
+	//CreateTopWall, check if there is an Exit or/and Exit
+	if (RoomConnectionInfo.EntraceRoomID >= 0 && RoomConnectionInfo.EntraceDoorID == 1) {
+		if (RoomConnectionInfo.ExitType1 == 2 || RoomConnectionInfo.ExitType2 == 2 || RoomConnectionInfo.ExitType3 == 2) {
+			//Entrace and Exit
 
-	if (RoomConnectionInfo.ExitAmount > 0) {
-		if (RoomConnectionInfo.ExitType1 != RoomConnectionInfo.ExitType2 && RoomConnectionInfo.ExitType1 != RoomConnectionInfo.ExitType3) {
-			switch (RoomConnectionInfo.ExitType1) {
-			case 0:
-				l_Tiles[l_room_w]->Destroy();
-				l_Tiles[l_room_w+1]->Destroy();
-				l_Tiles[l_room_w+2]->Destroy();
-				break;
-
-			case 1:
-				l_Tiles[l_room_w-2]->Destroy();
-				l_Tiles[l_room_w-3]->Destroy();
-				l_Tiles[l_room_w-4]->Destroy();
-				break;
-
-			case 2:
-				l_Tiles[l_room_w + l_room_h +1]->Destroy();
-				l_Tiles[l_room_w + l_room_h +2]->Destroy();
-				l_Tiles[l_room_w + l_room_h +3]->Destroy();
-				break;
-
-			default:
-				//CALL ERROR, NO EXIT TYPE HANDLED
-				break;
-			}
+			l_wall_location.X = ((l_room_w - 1) / 2.0f) *20.0f;
+			l_wall_location.Y = (l_room_h-1)*20.0f;
+			l_wall_scale.X = l_room_w - 8.0f;
+			l_wall_scale.Y = 1.0f;
 		}
-	}
-	if (RoomConnectionInfo.ExitAmount > 1) {
-		if (RoomConnectionInfo.ExitType1 != RoomConnectionInfo.ExitType2 && RoomConnectionInfo.ExitType2 != RoomConnectionInfo.ExitType3) {
-			switch (RoomConnectionInfo.ExitType2) {
-			case 0:
-				l_Tiles[l_room_w]->Destroy();
-				l_Tiles[l_room_w + 1]->Destroy();
-				l_Tiles[l_room_w + 2]->Destroy();
-				break;
-
-			case 1:
-				l_Tiles[l_room_w - 2]->Destroy();
-				l_Tiles[l_room_w - 3]->Destroy();
-				l_Tiles[l_room_w - 4]->Destroy();
-				break;
-
-			case 2:
-				l_Tiles[l_room_w + l_room_h + 1]->Destroy();
-				l_Tiles[l_room_w + l_room_h + 2]->Destroy();
-				l_Tiles[l_room_w + l_room_h + 3]->Destroy();
-				break;
-
-			default:
-				//CALL ERROR, NO EXIT TYPE HANDLED
-				break;
-			}
+		else {
+			//Just Entrace
+			l_wall_location.X = (((l_room_w - 5.0f) / 2.0f) + 4.0f)   * 20.0f;
+			l_wall_location.Y = (l_room_h - 1)*20.0f;
+			l_wall_scale.X = l_room_w - 4.0f;
+			l_wall_scale.Y = 1.0f;
 		}
+
+		l_room_location = RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetActorLocation();
+		l_room_location.X += (RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetInfo()->RoomWidth - 5) * 20.0f;
+		l_room_location.Z -= (l_room_h  * 20.0f);
 	}
-	if (RoomConnectionInfo.ExitAmount > 2) {
-		if (RoomConnectionInfo.ExitType1 != RoomConnectionInfo.ExitType3 && RoomConnectionInfo.ExitType2 != RoomConnectionInfo.ExitType3) {
-			switch (RoomConnectionInfo.ExitType3) {
-			case 0:
-				l_Tiles[l_room_w]->Destroy();
-				l_Tiles[l_room_w + 1]->Destroy();
-				l_Tiles[l_room_w + 2]->Destroy();
-				break;
-
-			case 1:
-				l_Tiles[l_room_w - 2]->Destroy();
-				l_Tiles[l_room_w - 3]->Destroy();
-				l_Tiles[l_room_w - 4]->Destroy();
-				break;
-
-			case 2:
-				l_Tiles[l_room_w + l_room_h + 1]->Destroy();
-				l_Tiles[l_room_w + l_room_h + 2]->Destroy();
-				l_Tiles[l_room_w + l_room_h + 3]->Destroy();
-				break;
-
-			default:
-				//CALL ERROR, NO EXIT TYPE HANDLED
-				break;
-			}
-		}
+	else if (RoomConnectionInfo.ExitType1 == 2 || RoomConnectionInfo.ExitType2 == 2 || RoomConnectionInfo.ExitType3 == 2) {
+		//Just Exit
+		l_wall_location.X = ((l_room_w - 5.0f) / 2.0f)   * 20.0f;
+		l_wall_location.Y = (l_room_h - 1)*20.0f;
+		l_wall_scale.X = l_room_w - 4.0f;
+		l_wall_scale.Y = 1.0f;
 	}
+	else {
+		l_wall_location.X = ((l_room_w - 1) / 2.0f) *20.0f;
+		l_wall_location.Y = (l_room_h - 1)*20.0f;
+		l_wall_scale.X = l_room_w;
+		l_wall_scale.Y = 1.0f;
+	}
+	SpawnTile(l_wall_location, l_wall_scale);
+
+	if (RoomConnectionInfo.EntraceRoomID >= 0) {
+		this->SetActorLocation(l_room_location);
+	}	
 }
 
