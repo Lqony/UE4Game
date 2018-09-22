@@ -21,6 +21,16 @@ struct FSPRoomTable {
 		TArray<ASPRoomActivator1CPP*> RoomActivators;
 };
 
+USTRUCT(BlueprintType)
+struct FSPCreateMapData {
+
+	GENERATED_BODY()
+
+		bool Creating; //Is Createing
+		int State; //0 - Destroy Previous, 1 - Spawn RoomManagers, 2 - SetConnectionInfo
+		int RoomAmount = 0;
+};
+
 UCLASS()
 class SUPERFIGHTER_API ASPMapManagerCPP : public AActor
 {
@@ -30,6 +40,8 @@ protected:
 
 		UPROPERTY(EditAnywhere, Category = MapManager)
 		FSPRoomTable Rooms;
+
+		FSPCreateMapData NewMapData;
 
 		bool CreationPending;
 		FVector PendingLocation;
@@ -58,10 +70,12 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Category = MapManager)
 		ULevelStreamingKismet* CallLoadLevelInstance();
 
-
 	UFUNCTION(BlueprintNativeEvent, Category = MapManager)
 		TArray<ASPRoomActivator1CPP*> GetActivators();
 
 	UFUNCTION(BlueprintCallable, Category = MapManager)
 		TArray<ASPRoomManagerCPP*> GetRoomManager() { return Rooms.RoomManagers; }
+
+	UFUNCTION(BlueprintCallable, Category = MapManager)
+		void CreateNewMap();
 };

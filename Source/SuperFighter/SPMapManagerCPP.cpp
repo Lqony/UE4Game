@@ -2,6 +2,7 @@
 
 #include "SuperFighter.h"
 #include "Runtime/Engine/Classes/Engine/LevelStreamingKismet.h"
+#include "Runtime/Core/Public/Math/UnrealMathUtility.h"
 #include "SPMapManagerCPP.h"
 
 
@@ -43,6 +44,7 @@ ASPMapManagerCPP::ASPMapManagerCPP()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	CreationPending = false;
+	NewMapData.Creating = false;
 }
 
 // Called when the game starts or when spawned
@@ -106,6 +108,48 @@ void ASPMapManagerCPP::ManageActivators()
 			}
 		}
 	}
+}
+
+void ASPMapManagerCPP::CreateNewMap()
+{
+	if (!NewMapData.Creating) {
+		NewMapData.Creating = true;
+		NewMapData.State = 0;
+	}
+
+	switch (NewMapData.State) {
+
+	case 0:
+		//Destroy All Previous Actors
+		for (int i = 0; i < Rooms.RoomManagers.Num(); i++) {
+			Rooms.RoomManagers[i]->ClearAndDelete();
+		}
+
+		for (int i = 0; i < Rooms.RoomLevels.Num(); i++) {
+			Rooms.RoomLevels[i]->BeginDestroy();
+			Rooms.RoomLevels[i]->FinishDestroy();
+		}
+		NewMapData.RoomAmount = FMath::RandRange(30, 50);
+		NewMapData.State = 1;
+		break;
+
+	case 1:
+		if (!CreationPending) {
+			if (Rooms.RoomManagers.Num() < NewMapData.RoomAmount) {
+				CreateRoom();
+			}
+			else {
+				NewMapData.State = 2;
+			}
+		}
+		break;
+
+	case 2:
+	//	Rooms.RoomManagers[0]->SetConnectionInfo(-1, -1, )
+		break;
+
+	}
+	
 }
 
 TArray<ASPRoomActivator1CPP*> ASPMapManagerCPP::GetActivators_Implementation()

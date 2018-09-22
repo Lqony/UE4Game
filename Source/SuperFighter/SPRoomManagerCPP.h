@@ -23,16 +23,8 @@ struct FSPRoomConnectionInfo {
 		int ExitAmount;
 
 	UPROPERTY(EditAnywhere, Category = RoomManager)
-		//Exit 1 type : 1 - Left Wall(1-3tile, 2 - Floor ((n-8)-(n-5)tile), 3 - roof ((n-8)-(n-5)tile))
-		int ExitType1 = -1;
-
-	UPROPERTY(EditAnywhere, Category = RoomManager)
-		//From Wchich Exit doors of previus room we get to this one
-		int ExitType2 = -1;
-
-	UPROPERTY(EditAnywhere, Category = RoomManager)
-		//From Wchich Exit doors of previus room we get to this one
-		int ExitType3 = -1;
+		//ExitType
+		TArray<int> ExitType;
 };
 
 USTRUCT(BlueprintType)
@@ -60,7 +52,13 @@ protected:
 		bool Active;
 
 	UPROPERTY(EditAnywhere, Category = RoomManager)
+		bool Created;
+
+	UPROPERTY(EditAnywhere, Category = RoomManager)
 	TArray<ASPRoomManagerCPP*> RoomManagers;
+
+	UPROPERTY(EditAnywhere, Category = RoomManager)
+		TArray<AActor*> Doors;
 
 	UPROPERTY(EditAnywhere, Category = RoomManager)
 		FSPRoomInfo Info;
@@ -74,9 +72,9 @@ protected:
 		TArray<AActor*> SpawnTiles(int amount);
 
 	UFUNCTION(BLueprintNativeEvent, Category = RoomManager)
-	AActor* SpawnTile(FVector2D _Loc, FVector2D _Scale);
+	AActor* SpawnTile(FVector2D _Loc, FVector2D _Scale, int Material);
 
-	
+	bool IsExitType(int type);
 	
 public:	
 	// Sets default values for this actor's properties
@@ -94,6 +92,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = RoomManager)
 	bool GetActive() { return Active;  }
 	
+	UFUNCTION(BlueprintCallable, Category = RoomManager)
+		bool GetCreated() { return Created; }
 
 	UFUNCTION(BlueprintCallable, Category = RoomManager)
 		bool Activate(FSPRoomActivatorData1 _Data);
@@ -104,7 +104,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = RoomManager)
 		void SetRoomManagersTable(TArray<ASPRoomManagerCPP*> _RoomManagers);
 
+
+	UFUNCTION(BlueprintNativeEvent, Category = MapManager)
+		void SpawnDoorKey(int _Type, AActor *_DoorsActor, FVector2D _Location);
+
 	FSPRoomConnectionInfo *GetConnectionInfo() { return &RoomConnectionInfo; }
 
 	FSPRoomInfo* GetInfo() { return &Info; }
+
+	void ClearAndDelete();
 };
