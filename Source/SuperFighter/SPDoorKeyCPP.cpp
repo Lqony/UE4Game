@@ -26,7 +26,7 @@ void ASPDoorKeyCPP::Tick( float DeltaTime )
 	Super::Tick( DeltaTime );
 
 	if (Open) {
-		float l_delta = 20.0f * (DeltaTime / 1.0f);
+		float l_delta = 60.0f * (DeltaTime / 1.0f);
 		Delta += l_delta;
 		if (IsValid(Doors)) {
 			FVector l_doors_location = Doors->GetActorLocation();
@@ -40,7 +40,7 @@ void ASPDoorKeyCPP::Tick( float DeltaTime )
 			}
 
 
-			if (Delta >= 60.0f) {
+			if (Delta >= 60.0f * 5.0f) {
 				this->Destroy();
 			}
 		}

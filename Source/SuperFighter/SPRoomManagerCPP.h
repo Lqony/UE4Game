@@ -74,6 +74,9 @@ protected:
 	UFUNCTION(BLueprintNativeEvent, Category = RoomManager)
 	AActor* SpawnTile(FVector2D _Loc, FVector2D _Scale, int Material);
 
+	UFUNCTION(BLueprintNativeEvent, Category = RoomManager)
+		AActor* SpawnRoomLoader(FVector2D _Loc, FVector2D _Scale, ULevelStreamingKismet* _SubLevel, bool _Show);
+
 	bool IsExitType(int type);
 	
 public:	
@@ -85,6 +88,9 @@ public:
 	
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
+
+	UFUNCTION(BlueprintCallable, Category = RoomManager)
+	FSPRoomActivatorData1 GetData() { return Data; }
 
 	UFUNCTION(BlueprintCallable, Category = RoomManager)
 		void CreateRoom();
@@ -100,6 +106,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = RoomManager)
 		void SetConnectionInfo(int _EntraceRoomID, int _EntraceDoorID, int _ExitAmount, TArray<int> _ExitTypes);
+
+	UFUNCTION(BlueprintCallable, Category = RoomManager)
+		void SetExitRoom(int _Type, ULevelStreamingKismet* _SubLevel);
 
 	UFUNCTION(BlueprintCallable, Category = RoomManager)
 		void SetRoomManagersTable(TArray<ASPRoomManagerCPP*> _RoomManagers);

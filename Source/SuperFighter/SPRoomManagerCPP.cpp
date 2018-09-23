@@ -10,6 +10,11 @@ AActor * ASPRoomManagerCPP::SpawnTile_Implementation(FVector2D _Loc, FVector2D _
 	return nullptr;
 }
 
+AActor * ASPRoomManagerCPP::SpawnRoomLoader_Implementation(FVector2D _Loc, FVector2D _Scale, ULevelStreamingKismet* _SubLevel, bool _Show)
+{
+	return nullptr;
+}
+
 bool ASPRoomManagerCPP::IsExitType(int type)
 {
 	for (int i = 0; i < RoomConnectionInfo.ExitType.Num() && i < 3; i++) {
@@ -89,6 +94,59 @@ void ASPRoomManagerCPP::SetConnectionInfo(int _EntraceRoomID, int _EntraceDoorID
 	}
 }
 
+void ASPRoomManagerCPP::SetExitRoom(int _Type, ULevelStreamingKismet * _SubLevel)
+{
+	FVector2D _location;
+	FVector2D _scale;
+	switch (_Type) {
+
+	case 0:
+		//ShowNextRoom
+		_location.X = (Info.RoomWidth+0.1f) *20.0f * 5.0f;
+		_location.Y = 2.0f * 20.0f * 5.0f;
+		_scale.X = 1.0f;
+		_scale.Y = 3.0f * 5.0f;
+		//SpawnTile(_location, _scale, 0);
+		SpawnRoomLoader(_location, _scale, _SubLevel, true);
+
+		_location.X = (Info.RoomWidth -0.4f) *20.0f * 5.0f;
+		_location.Y = 2.0f * 20.0f * 5.0f;
+		//SpawnTile(_location, _scale, 0);
+		SpawnRoomLoader(_location, _scale, _SubLevel, false);
+		break;
+
+	case 1:
+		//ShowNextRoom
+		_location.X = (Info.RoomWidth - 3.0f) *20.0f * 5.0f;
+		_location.Y = -1.8f * 20.0f * 5.0f;
+		_scale.X = 3.0f * 5.0f;
+		_scale.Y = 1.0f;
+		//SpawnTile(_location, _scale, 0);
+		SpawnRoomLoader(_location, _scale, _SubLevel, true);
+
+		_location.X = (Info.RoomWidth - 3.0f) *20.0f * 5.0f;
+		_location.Y = -0.6f * 20.0f * 5.0f;
+		//SpawnTile(_location, _scale, 0);
+		SpawnRoomLoader(_location, _scale, _SubLevel, false);
+		break;
+
+	case 2:
+		//ShowNextRoom
+		_location.X = (Info.RoomWidth - 3.0f) *20.0f * 5.0f;
+		_location.Y = (Info.RoomHeight+0.2f) * 20.0f * 5.0f;
+		_scale.X = 3.0f * 5.0f;
+		_scale.Y = 1.0f;
+		//SpawnTile(_location, _scale, 0);
+		SpawnRoomLoader(_location, _scale, _SubLevel, true);
+
+		_location.X = (Info.RoomWidth - 3.0f) *20.0f * 5.0f;
+		_location.Y = (Info.RoomHeight-0.5) * 20.0f * 5.0f;
+		//SpawnTile(_location, _scale, 0);
+		SpawnRoomLoader(_location, _scale, _SubLevel, false);
+		break;
+	}
+}
+
 void ASPRoomManagerCPP::SetRoomManagersTable(TArray<ASPRoomManagerCPP*> _RoomManagers)
 {
 	RoomManagers = _RoomManagers;
@@ -125,35 +183,35 @@ void ASPRoomManagerCPP::CreateRoom()
 	FVector2D l_wall_scale;
 	//CreateLeftWal, check if there is an Entrace
 	if(RoomConnectionInfo.EntraceRoomID >= 0 && RoomConnectionInfo.EntraceDoorID == 0){
-		l_wall_location.X = 0.0f;
-		l_wall_location.Y = (((l_room_h-5.0f) / 2.0f)+4.0f)  * 20.0f;
-		l_wall_scale.X = 1.0f;
-		l_wall_scale.Y = (l_room_h - 4.0f);		
+		l_wall_location.X = 0.0f * 5.0f;
+		l_wall_location.Y = (((l_room_h-5.0f) / 2.0f)+4.0f)  * 20.0f * 5.0f;
+		l_wall_scale.X = 1.0f * 5.0f;
+		l_wall_scale.Y = (l_room_h - 4.0f) * 5.0f;
 		//Locate this room
 		l_room_location = RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetActorLocation();
-		l_room_location.X += (RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetInfo()->RoomWidth-1) * 20.0f;
+		l_room_location.X += (RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetInfo()->RoomWidth-1) * 20.0f * 5.0f;
 	}
 	else {
-		l_wall_location.X = 0.0f;
-		l_wall_location.Y = ((l_room_h-1.0f)  / 2.0f)  * 20.0f;
-		l_wall_scale.X = 1.0f;
-		l_wall_scale.Y = l_room_h;
+		l_wall_location.X = 0.0f * 5.0f;
+		l_wall_location.Y = ((l_room_h-1.0f)  / 2.0f)  * 20.0f * 5.0f;
+		l_wall_scale.X = 1.0f * 5.0f;
+		l_wall_scale.Y = l_room_h * 5.0f;
 	}
 	SpawnTile(l_wall_location, l_wall_scale, 0);
 
 	//CreateRightWall, check if there is an Exit
 	if (IsExitType(0)) {
 
-		l_wall_location.X = (l_room_w - 1.0f)*20.0f;
-		l_wall_location.Y = ((((l_room_h - 1.0f) - 4.0f) / 2.0f) + 4.0f)  * 20.0f;
-		l_wall_scale.X = 1.0f;
-		l_wall_scale.Y = (l_room_h - 4.0f);
+		l_wall_location.X = (l_room_w - 1.0f)*20.0f * 5.0f;
+		l_wall_location.Y = ((((l_room_h - 1.0f) - 4.0f) / 2.0f) + 4.0f)  * 20.0f * 5.0f;
+		l_wall_scale.X = 1.0f * 5.0f;
+		l_wall_scale.Y = (l_room_h - 4.0f) * 5.0f;
 	}
 	else {
-		l_wall_location.X = (l_room_w - 1.0f)*20.0f;
-		l_wall_location.Y = ((l_room_h - 1.0f) / 2.0f)  * 20.0f;
-		l_wall_scale.X = 1.0f;
-		l_wall_scale.Y = l_room_h;
+		l_wall_location.X = (l_room_w - 1.0f)*20.0f * 5.0f;
+		l_wall_location.Y = ((l_room_h - 1.0f) / 2.0f)  * 20.0f * 5.0f;
+		l_wall_scale.X = 1.0f * 5.0f;
+		l_wall_scale.Y = l_room_h * 5.0f;
 	}
 	SpawnTile(l_wall_location, l_wall_scale, 0);
 
@@ -162,35 +220,35 @@ void ASPRoomManagerCPP::CreateRoom()
 		if (IsExitType(1)) {
 			//Entrace and Exit
 
-			l_wall_location.X = ((l_room_w-1) / 2.0f) *20.0f;
-			l_wall_location.Y = 0.0f;
-			l_wall_scale.X = l_room_w - 8.0f;
-			l_wall_scale.Y = 1.0f;
+			l_wall_location.X = ((l_room_w-1) / 2.0f) *20.0f * 5.0f;
+			l_wall_location.Y = 0.0f * 5.0f;
+			l_wall_scale.X = (l_room_w - 8.0f) * 5.0f;
+			l_wall_scale.Y = 1.0f * 5.0f;
 		}
 		else {
 			//Just Entrace
-			l_wall_location.X = (((l_room_w - 5.0f) / 2.0f)+4.0f)   * 20.0f;
-			l_wall_location.Y = 0.0f;
-			l_wall_scale.X = l_room_w - 4.0f;
-			l_wall_scale.Y = 1.0f;
+			l_wall_location.X = (((l_room_w - 5.0f) / 2.0f)+4.0f)   * 20.0f * 5.0f;
+			l_wall_location.Y = 0.0f * 5.0f;
+			l_wall_scale.X = (l_room_w - 4.0f) * 5.0f;
+			l_wall_scale.Y = 1.0f * 5.0f;
 		}
 
 		l_room_location = RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetActorLocation();
-		l_room_location.X += (RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetInfo()->RoomWidth - 5) * 20.0f;
-		l_room_location.Z += ((RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetInfo()->RoomHeight-1.0f)  * 20.0f);
+		l_room_location.X += (RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetInfo()->RoomWidth - 5) * 20.0f * 5.0f;
+		l_room_location.Z += ((RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetInfo()->RoomHeight-1.0f)  * 20.0f) * 5.0f;
 	}
 	else if (IsExitType(1)) {
 		//Just Exit
-		l_wall_location.X = ((l_room_w - 5.0f) / 2.0f)   * 20.0f;
-		l_wall_location.Y = 0.0f;
-		l_wall_scale.X = l_room_w - 4.0f;
-		l_wall_scale.Y = 1.0f;
+		l_wall_location.X = ((l_room_w - 5.0f) / 2.0f)   * 20.0f * 5.0f;
+		l_wall_location.Y = 0.0f * 5.0f;
+		l_wall_scale.X = (l_room_w - 4.0f) * 5.0f;
+		l_wall_scale.Y = 1.0f * 5.0f;
 	}
 	else {	
-		l_wall_location.X = ((l_room_w - 1) /2.0f) *20.0f;
-		l_wall_location.Y = 0.0f;
-		l_wall_scale.X = l_room_w;
-		l_wall_scale.Y = 1.0f;
+		l_wall_location.X = ((l_room_w - 1) /2.0f) *20.0f * 5.0f;
+		l_wall_location.Y = 0.0f * 5.0f;
+		l_wall_scale.X = l_room_w * 5.0f;
+		l_wall_scale.Y = 1.0f * 5.0f;
 	}
 	SpawnTile(l_wall_location, l_wall_scale, 0);
 
@@ -199,35 +257,35 @@ void ASPRoomManagerCPP::CreateRoom()
 		if (IsExitType(2)) {
 			//Entrace and Exit
 
-			l_wall_location.X = ((l_room_w - 1) / 2.0f) *20.0f;
-			l_wall_location.Y = (l_room_h-1)*20.0f;
-			l_wall_scale.X = l_room_w - 8.0f;
-			l_wall_scale.Y = 1.0f;
+			l_wall_location.X = ((l_room_w - 1) / 2.0f) *20.0f * 5.0f;
+			l_wall_location.Y = (l_room_h-1)*20.0f * 5.0f;
+			l_wall_scale.X = (l_room_w - 8.0f) * 5.0f;
+			l_wall_scale.Y = 1.0f * 5.0f;
 		}
 		else {
 			//Just Entrace
-			l_wall_location.X = (((l_room_w - 5.0f) / 2.0f) + 4.0f)   * 20.0f;
-			l_wall_location.Y = (l_room_h - 1)*20.0f;
-			l_wall_scale.X = l_room_w - 4.0f;
-			l_wall_scale.Y = 1.0f;
+			l_wall_location.X = (((l_room_w - 5.0f) / 2.0f) + 4.0f)   * 20.0f  * 5.0f;
+			l_wall_location.Y = (l_room_h - 1)*20.0f * 5.0f;
+			l_wall_scale.X = (l_room_w - 4.0f) * 5.0f;
+			l_wall_scale.Y = 1.0f * 5.0f;
 		}
 
 		l_room_location = RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetActorLocation();
-		l_room_location.X += (RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetInfo()->RoomWidth - 5) * 20.0f;
-		l_room_location.Z -= ((l_room_h-1.0f)  * 20.0f);
+		l_room_location.X += (RoomManagers[RoomConnectionInfo.EntraceRoomID]->GetInfo()->RoomWidth - 5) * 20.0f * 5.0f;
+		l_room_location.Z -= ((l_room_h-1.0f)  * 20.0f) * 5.0f;
 	}
 	else if (IsExitType(2)) {
 		//Just Exit
-		l_wall_location.X = ((l_room_w - 5.0f) / 2.0f)   * 20.0f;
-		l_wall_location.Y = (l_room_h - 1)*20.0f;
-		l_wall_scale.X = l_room_w - 4.0f;
-		l_wall_scale.Y = 1.0f;
+		l_wall_location.X = ((l_room_w - 5.0f) / 2.0f)   * 20.0f * 5.0f;
+		l_wall_location.Y = (l_room_h - 1)*20.0f * 5.0f;
+		l_wall_scale.X = (l_room_w - 4.0f) * 5.0f;
+		l_wall_scale.Y = 1.0f * 5.0f;
 	}
 	else {
-		l_wall_location.X = ((l_room_w - 1) / 2.0f) *20.0f;
-		l_wall_location.Y = (l_room_h - 1)*20.0f;
-		l_wall_scale.X = l_room_w;
-		l_wall_scale.Y = 1.0f;
+		l_wall_location.X = ((l_room_w - 1) / 2.0f) *20.0f * 5.0f;
+		l_wall_location.Y = (l_room_h - 1)*20.0f * 5.0f;
+		l_wall_scale.X = l_room_w * 5.0f;
+		l_wall_scale.Y = 1.0f * 5.0f;
 	}
 	SpawnTile(l_wall_location, l_wall_scale, 0);
 	
@@ -236,39 +294,105 @@ void ASPRoomManagerCPP::CreateRoom()
 		for (int i = 0; i < RoomConnectionInfo.ExitType.Num(); i++) {
 			if (RoomConnectionInfo.ExitType[i] == 0) {
 				//RightDoors
-				l_wall_location.X = (l_room_w - 1.0f)*20.0f;
-				l_wall_location.Y = 40.0f;
-				l_wall_scale.X = 1.0f;
-				l_wall_scale.Y = 3.0f;
+				l_wall_location.X = (l_room_w - 1.0f)*20.0f * 5.0f;
+				l_wall_location.Y = 40.0f * 5.0f;
+				l_wall_scale.X = 1.0f * 5.0f;
+				l_wall_scale.Y = 3.0f * 5.0f;
 				Doors.Add(SpawnTile(l_wall_location, l_wall_scale, 1));
 				FVector2D _key_location;
-				_key_location.X = FMath::RandRange(3, l_room_w - 3) * 20.0f;
-				_key_location.Y = FMath::RandRange(3, l_room_h - 3) * 20.0f;
+				_key_location.X = FMath::RandRange(3, l_room_w - 3) * 20.0f * 5.0f;
+				_key_location.Y = FMath::RandRange(1.0f, 3.0f) * 20.0f * 5.0f;
 				SpawnDoorKey(1, Doors[i], _key_location);
+
+				//Right Hallway
+				l_wall_location.X = (l_room_w + 1.5f)*20.0f * 5.0f;
+				l_wall_location.Y = 4*20.0f * 5.0f;
+				l_wall_scale.X = 4.0f * 5.0f;
+				l_wall_scale.Y = 1.0f * 5.0f;
+				SpawnTile(l_wall_location, l_wall_scale, 0);
+
+				l_wall_location.X = (l_room_w + 1.5f)*20.0f * 5.0f;
+				l_wall_location.Y = 0.0f;
+				l_wall_scale.X = 4.0f * 5.0f;
+				l_wall_scale.Y = 1.0f * 5.0f;
+				SpawnTile(l_wall_location, l_wall_scale, 0);
 			}
 			else if (RoomConnectionInfo.ExitType[i] == 1) {
 				//BottomDoors
-				l_wall_location.X = (l_room_w - 3.0f) *20.0f;
-				l_wall_location.Y = 0.0f;
-				l_wall_scale.X = 3.0f;
-				l_wall_scale.Y = 1.0f;
+				l_wall_location.X = (l_room_w - 3.0f) *20.0f * 5.0f;
+				l_wall_location.Y = 0.0f * 5.0f;
+				l_wall_scale.X = 3.0f * 5.0f;
+				l_wall_scale.Y = 1.0f * 5.0f;
 				Doors.Add(SpawnTile(l_wall_location, l_wall_scale, 1));
 				FVector2D _key_location;
-				_key_location.X = FMath::RandRange(3, l_room_w - 3) * 20.0f;
-				_key_location.Y = FMath::RandRange(3, l_room_h - 3) * 20.0f;
+				_key_location.X = FMath::RandRange(3, l_room_w - 3) * 20.0f * 5.0f;
+				_key_location.Y = FMath::RandRange(1.0f, 3.0f) * 20.0f * 5.0f;
 				SpawnDoorKey(2, Doors[i], _key_location);
+
+				//Bottom Hallway
+				l_wall_location.X = (l_room_w - 5.0f) *20.0f * 5.0f;
+				l_wall_location.Y = -2.5f * 20.0f * 5.0f;
+				l_wall_scale.X = 1.0f * 5.0f;
+				l_wall_scale.Y = 4.0f * 5.0f;
+				SpawnTile(l_wall_location, l_wall_scale, 0);
+
+				l_wall_location.X = (l_room_w - 1.0f) *20.0f * 5.0f;
+				l_wall_location.Y = -2.5f * 20.0f * 5.0f;
+				l_wall_scale.X = 1.0f * 5.0f;
+				l_wall_scale.Y = 4.0f * 5.0f;
+				SpawnTile(l_wall_location, l_wall_scale, 0);
+
+				//Stairs
+				l_wall_location.X = (l_room_w - 3.5f) *20.0f * 5.0f;
+				l_wall_location.Y = -2.0f * 20.0f * 5.0f;
+				l_wall_scale.X = 2.0f * 5.0f;
+				l_wall_scale.Y = 1.0f;
+				SpawnTile(l_wall_location, l_wall_scale, 0);
+
+				l_wall_location.X = (l_room_w - 2.5f) *20.0f * 5.0f;
+				l_wall_location.Y = -4.0f * 20.0f * 5.0f;
+				l_wall_scale.X = 2.0f * 5.0f;
+				l_wall_scale.Y = 1.0f;
+				SpawnTile(l_wall_location, l_wall_scale, 0);
+				
 			}
 			else if (RoomConnectionInfo.ExitType[i] == 2) {
-				//Top
-				l_wall_location.X = (l_room_w - 3.0f) *20.0f;
-				l_wall_location.Y = (l_room_h - 1)*20.0f;
-				l_wall_scale.X = 3.0f;
-				l_wall_scale.Y = 1.0f;
+				//Top Doors
+				l_wall_location.X = (l_room_w - 3.0f) *20.0f * 5.0f;
+				l_wall_location.Y = (l_room_h - 1)*20.0f * 5.0f;
+				l_wall_scale.X = 3.0f * 5.0f;
+				l_wall_scale.Y = 1.0f * 5.0f;
 				Doors.Add(SpawnTile(l_wall_location, l_wall_scale, 1));
 				FVector2D _key_location;
-				_key_location.X = FMath::RandRange(3, l_room_w - 3) * 20.0f;
-				_key_location.Y = FMath::RandRange(3, l_room_h - 3) * 20.0f;
+				_key_location.X = FMath::RandRange(3, l_room_w - 3) * 20.0f * 5.0f;
+				_key_location.Y = FMath::RandRange(1.0f, 3.0f) * 20.0f * 5.0f;
 				SpawnDoorKey(2, Doors[i], _key_location);
+
+				//Top Hallway
+				l_wall_location.X = (l_room_w - 5.0f) *20.0f * 5.0f;
+				l_wall_location.Y = (l_room_h+1.5f) * 20.0f * 5.0f;
+				l_wall_scale.X = 1.0f * 5.0f;
+				l_wall_scale.Y = 4.0f * 5.0f;
+				SpawnTile(l_wall_location, l_wall_scale, 0);
+
+				l_wall_location.X = (l_room_w - 1.0f) *20.0f * 5.0f;
+				l_wall_location.Y = (l_room_h + 1.5f) * 20.0f * 5.0f;
+				l_wall_scale.X = 1.0f * 5.0f;
+				l_wall_scale.Y = 4.0f * 5.0f;
+				SpawnTile(l_wall_location, l_wall_scale, 0);
+
+				//Top Stairs
+				l_wall_location.X = (l_room_w - 3.5f) *20.0f * 5.0f;
+				l_wall_location.Y = (l_room_h + 2.0f) * 20.0f * 5.0f;
+				l_wall_scale.X = 2.0f * 5.0f;
+				l_wall_scale.Y = 1.0f;
+				SpawnTile(l_wall_location, l_wall_scale, 0);
+
+				l_wall_location.X = (l_room_w - 2.5f) *20.0f * 5.0f;
+				l_wall_location.Y = (l_room_h) * 20.0f * 5.0f;
+				l_wall_scale.X = 2.0f * 5.0f;
+				l_wall_scale.Y = 1.0f;
+				SpawnTile(l_wall_location, l_wall_scale, 0);
 			}
 
 			else {
@@ -279,7 +403,90 @@ void ASPRoomManagerCPP::CreateRoom()
 	}
 
 	if (RoomConnectionInfo.EntraceRoomID >= 0) {
+		//l_room_location dodaj based on hallway
+		if (RoomConnectionInfo.EntraceDoorID == 0) {
+			//Left HighWall
+			l_wall_location.X = (0.0f - 2.5f)*20.0f * 5.0f;
+			l_wall_location.Y = 4 * 20.0f * 5.0f;
+			l_wall_scale.X = 4.0f * 5.0f;
+			l_wall_scale.Y = 1.0f * 5.0f;
+			SpawnTile(l_wall_location, l_wall_scale, 0);
+
+			l_wall_location.X = (0.0f - 2.5f)*20.0f * 5.0f;
+			l_wall_location.Y = 0.0f;
+			l_wall_scale.X = 4.0f * 5.0f;
+			l_wall_scale.Y = 1.0f * 5.0f;
+			SpawnTile(l_wall_location, l_wall_scale, 0);
+
+			RoomManagers[RoomConnectionInfo.EntraceRoomID]->SetExitRoom(0, Data.ParentSubLevel);
+
+			l_room_location.X += 9.0f * 20.0f*5.0f;
+		}
+		else if(RoomConnectionInfo.EntraceDoorID == 1){
+			//Top Hallway
+			l_wall_location.X = 0;
+			l_wall_location.Y = (l_room_h + 1.5f) * 20.0f * 5.0f;
+			l_wall_scale.X = 1.0f * 5.0f;
+			l_wall_scale.Y = 4.0f * 5.0f;
+			SpawnTile(l_wall_location, l_wall_scale, 0);
+
+			l_wall_location.X = 4.0f * 20.0f * 5.0f;
+			l_wall_location.Y = (l_room_h + 1.5f) * 20.0f * 5.0f;
+			l_wall_scale.X = 1.0f * 5.0f;
+			l_wall_scale.Y = 4.0f * 5.0f;
+			SpawnTile(l_wall_location, l_wall_scale, 0);
+
+			//Stairs
+			l_wall_location.X = 1.5f * 20.0f * 5.0f;
+			l_wall_location.Y = (l_room_h + 2.0f) * 20.0f * 5.0f;
+			l_wall_scale.X = 2.0f * 5.0f;
+			l_wall_scale.Y = 1.0f;
+			SpawnTile(l_wall_location, l_wall_scale, 0);
+
+			l_wall_location.X = 2.5f * 20.0f * 5.0f;
+			l_wall_location.Y = (l_room_h) * 20.0f * 5.0f;
+			l_wall_scale.X = 2.0f * 5.0f;
+			l_wall_scale.Y = 1.0f;
+			SpawnTile(l_wall_location, l_wall_scale, 0);
+
+			RoomManagers[RoomConnectionInfo.EntraceRoomID]->SetExitRoom(1, Data.ParentSubLevel);
+
+			l_room_location.Z -= 9.0f * 20.0f*5.0f;
+		}
+		else if (RoomConnectionInfo.EntraceDoorID == 2) {
+			//Bottom Hallway
+			l_wall_location.X = 0;
+			l_wall_location.Y = (-2.5f) * 20.0f * 5.0f;
+			l_wall_scale.X = 1.0f * 5.0f;
+			l_wall_scale.Y = 4.0f * 5.0f;
+			SpawnTile(l_wall_location, l_wall_scale, 0);
+
+			l_wall_location.X = 4.0f * 20.0f * 5.0f;
+			l_wall_location.Y = (-2.5f) * 20.0f * 5.0f;
+			l_wall_scale.X = 1.0f * 5.0f;
+			l_wall_scale.Y = 4.0f * 5.0f;
+			SpawnTile(l_wall_location, l_wall_scale, 0);
+
+			//Stairs
+			l_wall_location.X = 1.5f * 20.0f * 5.0f;
+			l_wall_location.Y = -2.0f * 20.0f * 5.0f;
+			l_wall_scale.X = 2.0f * 5.0f;
+			l_wall_scale.Y = 1.0f;
+			SpawnTile(l_wall_location, l_wall_scale, 0);
+
+			l_wall_location.X = 2.5f * 20.0f * 5.0f;
+			l_wall_location.Y = -4.0f * 20.0f * 5.0f;
+			l_wall_scale.X = 2.0f * 5.0f;
+			l_wall_scale.Y = 1.0f;
+			SpawnTile(l_wall_location, l_wall_scale, 0);
+
+			RoomManagers[RoomConnectionInfo.EntraceRoomID]->SetExitRoom(2, Data.ParentSubLevel);
+
+			l_room_location.Z += 9.0f * 20.0f*5.0f;
+		}
 		this->SetActorLocation(l_room_location);
+
+		Data.ParentSubLevel->bShouldBeVisible = false;
 	}	
 
 	Created = true;
