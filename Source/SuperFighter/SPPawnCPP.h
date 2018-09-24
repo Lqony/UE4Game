@@ -256,6 +256,9 @@ struct FSPPawnStates {
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 		bool SUPER_MOVE = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
+		bool DEFENCE_COOLDOWN = false;
 };
 
 USTRUCT(BlueprintType)
@@ -276,6 +279,10 @@ struct FSPWorkData {
 		float HitStun = 0.0f;
 		//+1 every 0.1 second
 		int StrongAttackMeter = 0;
+		//Every time we "hit" with light attack we strengen our next strong attack meter withing a ~second (charing strong attack wont decrease lightattack metter);
+		int LightAttackMeter = 0;
+		bool LightAttackMeterTimer = false;
+		float LightAttackMeterDelta = 0;
 		bool WasHit = false;
 		FVector HitForce;
 		bool AddingForce = false;
@@ -283,14 +290,15 @@ struct FSPWorkData {
 		int AirJumped;
 		bool IsLocal;
 		bool FacingRight;
-		float CurrentDefence = 0.0f;
 		//More injuried you are the further you fly after getting hit and how long hit stun last, 
 		//(SOME CHAPMIONS MAY USED TO SOME ADDITIONAL THINGS)
 		//You can not add to hit stun (you can only hit stun unstun enemy, if he is already hit stun then hit stun wont replenish
 		int Injuries = 0;
-		float DefenceDelta = 0.0f;
 
 		bool CanJumpAgain = true;
+
+		bool DefenceTimer;
+		float DefenceDelta;
 
 		bool JumpTimer;
 		float JumpTimerDelta;
@@ -374,8 +382,6 @@ protected:
 	UPROPERTY(ReplicatedUsing = RepNot_UpdateForces, EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 		FVector2D ClientForces;
 
-	UPROPERTY(ReplicatedUsing = RepNot_UpdateCurrentDefence, EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
-		float ClientCurrentDefence;
 	UPROPERTY(ReplicatedUsing = RepNot_UpdateInjuries, EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 		int ClientInjuries;
 
@@ -423,9 +429,7 @@ protected:
 	void FixPossitionError();
 
 	void SetUpDefence();
-	void ClearDefence();
-	void UseDefence();
-	void ReplenishDefence();
+	void RepelDefence();
 
 	void SetUpDash();
 	void StopDash();
@@ -455,6 +459,7 @@ protected:
 	void ManageDash(float DeltaTime);
 	void ManageClient(float DeltaTime);
 	void ManageDelay(float DeltaTime);
+	void ManageLightAttackMeter(float DeltaTime);
 
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
 		//Call on the beggining of every action, It block all possible moves so you need to unlock only those that are 
@@ -472,8 +477,8 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
 		//Will check if FacingLeft and will change xmodifier to -xmodifier and force.x tp - force.x if so, Loc Z is radius
-		ASPHitBoxCPP* CreateHitBox(FVector LocationModifier, FVector Force, float ActivationTime, float DestroyTime,
-			bool FriendlyFire, bool MultiHit, float Damage, float HitStun, bool followPlayer);
+		ASPHitBoxCPP* CreateHitBox(FVector LocationModifier, FVector2D Force, float PowerLevel, float ActivationTime, float DestroyTime, bool
+			FriendlyFire, bool MultiHit, bool followPlayer);
 		ASPHitBoxCPP* SpawnHitBox(FSPHitBoxDetails Details);
 
 	//ACTIONS---------------------------------------------------------
@@ -546,6 +551,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 		//For Run When XAxis is >. 0.8
 		FActionFunction ActionSuperMove;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
+		//Counter with defence
+		FActionFunction ActionDefenceRepeal;
 	//END ACTIONS -----------------------------------------------------
 
 public:
@@ -591,7 +600,7 @@ public:
 		void SetCanStrongAttack(bool can) { if(States.CAN_STRONG_ATTACK != can) States.CAN_STRONG_ATTACK = can; };
 
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
-		void SetCanDash(bool can) { if (!WorkData.DashTimer && States.CAN_DASH != can) States.CAN_DASH = can; };
+		void SetCanDash(bool can) { if (States.CAN_DASH != can) States.CAN_DASH = can; };
 
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
 		void SetCanDefence(bool can) { if (States.CAN_DEFENCE != can) States.CAN_DEFENCE = can; };
@@ -699,8 +708,6 @@ public:
 	UFUNCTION()
 		void RepNot_UpdateForces();
 	UFUNCTION()
-	void RepNot_UpdateCurrentDefence();
-	UFUNCTION()
 	void RepNot_UpdateInjuries();
 
 	UFUNCTION(Server, unreliable, WithValidation, BlueprintCallable, Category = SuperFighter)
@@ -740,9 +747,6 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = SuperFighter)
 		void DodgeBlink(bool start);
-
-	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = SuperFighter)
-		void DrawDefence();
 
 	void HitPosition(FVector2D AxisPosition, FVector& Position, FVector& Force);
 
@@ -797,10 +801,10 @@ public:
 		void Client_CallDelayAction(FVector2D n_Position);
 
 	UFUNCTION(NetMulticast, reliable, WithValidation, Category = SuperFighter)
-		void Client_GetHit(FVector2D n_Position, FVector n_KnockBack, float n_HitStun);
+		void Client_GetHit(FVector2D n_Position, FVector2D _Forces, float _PowerLevel);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = SuperFighter)
-		void GetHit(float hitstun, float damage, FVector knockback);
+		void GetHit(float _PowerLevel, FVector _KnockBack);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = SuperFighter)
 		void EndStun();
@@ -823,9 +827,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
 		float StrongAttackMeter();
-
-	UFUNCTION(BlueprintCallable, Category = SuperFighter)
-		float CurrentDefence();
 
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
 		float CurrentHitStun();
@@ -911,4 +912,7 @@ public:
 		UFUNCTION(BlueprintCallable, Category = SuperFighter)
 		void SlowTimeByForce(float force);
 		void SlowTimeAfterHit(float force);
+
+		UFUNCTION(BlueprintCallable, Category = SuperFighter)
+			void IncreaseLightAttackMeter();
 };

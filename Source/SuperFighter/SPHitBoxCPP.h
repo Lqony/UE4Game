@@ -25,7 +25,10 @@ struct FSPHitBoxDetails {
 		FVector Position;
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 		//X is x multiplier , Y is y(Z) multiplier and Z is force to be multiplied
-		FVector Force;
+		FVector2D Force;
+		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
+		//X is x multiplier , Y is y(Z) multiplier and Z is force to be multiplied
+		float PowerLevel;
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 		//How long from birth to activation
 		float ActivationTime;
@@ -38,10 +41,6 @@ struct FSPHitBoxDetails {
 		bool MultiHit;
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 		class ASPPawnCPP *Owner;
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
-		float Damage;
-		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
-		float HitStun;
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
 		bool FollowPlayer;
 		UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SuperFighter)
