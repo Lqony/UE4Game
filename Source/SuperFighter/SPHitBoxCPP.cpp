@@ -122,6 +122,36 @@ void ASPHitBoxCPP::SetMissile()
 	}
 }
 
+void ASPHitBoxCPP::OverlapWithHitBox(AActor * Actor)
+{
+	if (WorkData.Active) {
+		ASPPawnCPP *_PawnActor;
+		_PawnActor = CastToPawn(Actor);
+
+		if (IsValid(_PawnActor)) {
+			if (_PawnActor != Details.Owner || Details.FriendlyFire) {
+				if (HasAuthority()) {
+					_PawnActor->GetHit(Details.PowerLevel, FVector(Details.Force.X, Details.Force.Y, 0.0f));
+					Details.Owner->IncreaseLightAttackMeter();
+					if (!Details.MultiHit) {
+						if (MissileDetails.Missile) {
+							ExplodeOnHit();
+						}
+						else {
+							DestroyHitBox();
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+ASPPawnCPP * ASPHitBoxCPP::CastToPawn_Implementation(AActor * Actor)
+{
+	return nullptr;
+}
+
 void ASPHitBoxCPP::ExplodeOnHit()
 {
 	if (HasAuthority()) {

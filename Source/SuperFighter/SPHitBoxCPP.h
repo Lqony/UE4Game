@@ -135,6 +135,12 @@ public:
 		void SetMissile();
 
 	UFUNCTION(BlueprintCallable, Category = SuperFighter)
+		void OverlapWithHitBox(AActor *Actor);
+
+	UFUNCTION(BlueprintNativeEvent, Category = SuperFighter)
+		ASPPawnCPP* CastToPawn(AActor *Actor);
+
+	UFUNCTION(BlueprintCallable, Category = SuperFighter)
 		void ExplodeOnHit();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = SuperFighter)
